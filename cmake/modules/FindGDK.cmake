@@ -19,14 +19,14 @@ libfind_pkg_check_modules(GDK_PKGCONF gdk-2.0)
 find_path(GDK_INCLUDE_DIR
   NAMES gdk/gdk.h
   PATHS ${GDK_PKGCONF_INCLUDE_DIRS}
-  PATH_SUFFIXES gtk-2.0
+  PATH_SUFFIXES gtk-3.0
 )
 
 # Glib-related libraries also use a separate config header, which is in lib dir
 find_path(GDKConfig_INCLUDE_DIR
   NAMES gdkconfig.h
   PATHS ${GDK_PKGCONF_INCLUDE_DIRS} /usr
-  PATH_SUFFIXES lib/gtk-2.0/include
+  PATH_SUFFIXES include/gtk-3.0/gdk
 )
 
 # Finally the library itself
