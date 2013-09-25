@@ -317,7 +317,7 @@ void gui_init(struct dt_iop_module_t *self)
   c->x_move = -1;
   c->mouse_radius = 1.0/DT_IOP_EQUALIZER_BANDS;
 
-  self->widget = GTK_WIDGET(gtk_vbox_new(FALSE, 0));
+  self->widget = GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0));
   c->area = GTK_DRAWING_AREA(gtk_drawing_area_new());
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(c->area), TRUE, TRUE, 0);
   gtk_widget_set_size_request(GTK_WIDGET(c->area), 195, 195);
@@ -336,7 +336,7 @@ void gui_init(struct dt_iop_module_t *self)
   g_signal_connect (G_OBJECT (c->area), "scroll-event",
                     G_CALLBACK (dt_iop_equalizer_scrolled), self);
   // init gtk stuff
-  c->hbox = GTK_HBOX(gtk_hbox_new(FALSE, 0));
+  c->hbox = GTK_HBOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(c->hbox), FALSE, FALSE, 0);
 
   c->channel_button[0] = GTK_RADIO_BUTTON(gtk_radio_button_new_with_label(NULL, _("luma")));

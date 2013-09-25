@@ -85,7 +85,7 @@ gui_init (dt_lib_module_t *self)
 {
   dt_lib_map_settings_t *d = (dt_lib_map_settings_t*)malloc(sizeof(dt_lib_map_settings_t));
   self->data = d;
-  self->widget = gtk_vbox_new(TRUE, 5);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
   GtkBox *hbox;
   GtkWidget *label;
 
@@ -96,7 +96,7 @@ gui_init (dt_lib_module_t *self)
   g_signal_connect(G_OBJECT(d->show_osd_checkbutton), "toggled",
                    G_CALLBACK(_show_osd_toggled), NULL);
 
-  hbox = GTK_BOX(gtk_hbox_new(FALSE, 5));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
 
   label = gtk_label_new(_("map source"));
   gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);

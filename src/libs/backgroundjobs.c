@@ -102,7 +102,7 @@ void gui_init(dt_lib_module_t *self)
   d->jobs = g_hash_table_new(g_direct_hash,g_direct_equal);
 
   /* initialize base */
-  self->widget = d->jobbox = gtk_vbox_new(FALSE, 0);
+  self->widget = d->jobbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_no_show_all(self->widget, TRUE);
   gtk_container_set_border_width(GTK_CONTAINER(self->widget), 5);
 
@@ -143,8 +143,8 @@ static const guint * _lib_backgroundjobs_create(dt_lib_module_t *self,int type,c
 
   /* initialize the ui elements for job */
   gtk_widget_set_name (GTK_WIDGET (j->widget), "background_job_eventbox");
-  GtkBox *vbox = GTK_BOX (gtk_vbox_new (FALSE,0));
-  GtkBox *hbox = GTK_BOX (gtk_hbox_new (FALSE,0));
+  GtkBox *vbox = GTK_BOX (gtk_box_new(GTK_ORIENTATION_VERTICAL,0));
+  GtkBox *hbox = GTK_BOX (gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0));
   gtk_container_set_border_width (GTK_CONTAINER(vbox),2);
   gtk_container_add (GTK_CONTAINER(j->widget), GTK_WIDGET(vbox));
 

@@ -447,7 +447,7 @@ void gui_init(struct dt_iop_module_t *self)
   dt_iop_shrecovery_gui_data_t *g = (dt_iop_shrecovery_gui_data_t *)self->gui_data;
   dt_iop_shrecovery_params_t *p = (dt_iop_shrecovery_params_t *)self->params;
 
-  self->widget = gtk_vbox_new(FALSE, DT_GUI_IOP_MODULE_CONTROL_SPACING);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_GUI_IOP_MODULE_CONTROL_SPACING);
 
   g->scale1 = DTGTK_SLIDER(dtgtk_slider_new_with_range(DARKTABLE_SLIDER_BAR,-2.0, 6.0, 0.01, p->strength, 2));
   g->scale2 = DTGTK_SLIDER(dtgtk_slider_new_with_range(DARKTABLE_SLIDER_BAR,0.1, 0.9, 0.01, p->mu, 2));

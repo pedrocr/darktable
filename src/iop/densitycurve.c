@@ -710,7 +710,7 @@ void gui_init(struct dt_iop_module_t *self)
   memcpy(c->zonesystem_params, &tmp, sizeof(dt_iop_zonesystem_params_t));
 
 
-  self->widget = GTK_WIDGET(gtk_vbox_new(FALSE, 5));
+  self->widget = GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
   c->area = GTK_DRAWING_AREA(gtk_drawing_area_new());
   GtkWidget *asp = gtk_aspect_frame_new(NULL, 0.5, 0.5, 1.0, TRUE);
   gtk_box_pack_start(GTK_BOX(self->widget), asp, TRUE, TRUE, 0);

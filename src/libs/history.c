@@ -98,10 +98,10 @@ void gui_init(dt_lib_module_t *self)
   self->data = (void *)d;
   memset(d,0,sizeof(dt_lib_history_t));
 
-  self->widget =  gtk_vbox_new (FALSE,2);
-  d->history_box = gtk_vbox_new(FALSE,0);
+  self->widget =  gtk_box_new(GTK_ORIENTATION_VERTICAL,2);
+  d->history_box = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
 
-  GtkWidget *hhbox = gtk_hbox_new (FALSE,2);
+  GtkWidget *hhbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL,2);
 
   GtkWidget *hbutton = gtk_button_new_with_label (_("compress history stack"));
   d->compress_button = hbutton;

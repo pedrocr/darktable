@@ -261,7 +261,7 @@ void gui_init(struct dt_iop_module_t *self)
   c->last_picked_color = -1;
   for (int i=0; i<3; i++)
     for (int j=0; j<2; j++) c->pick_xy_positions[i][j] = -1;
-  self->widget = GTK_WIDGET(gtk_vbox_new(FALSE, 5));
+  self->widget = GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
   c->area = GTK_DRAWING_AREA(gtk_drawing_area_new());
   GtkWidget *asp = gtk_aspect_frame_new(NULL, 0.5, 0.5, 1.0, TRUE);
   gtk_box_pack_start(GTK_BOX(self->widget), asp, TRUE, TRUE, 0);
@@ -314,7 +314,7 @@ void gui_init(struct dt_iop_module_t *self)
   gtk_widget_modify_bg(GTK_WIDGET(greypick), GTK_STATE_ACTIVE, &col);
   gtk_widget_modify_bg(GTK_WIDGET(whitepick), GTK_STATE_ACTIVE, &col);
 
-  GtkWidget *box = gtk_hbox_new(TRUE,0);
+  GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0);
   gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(autobutton), FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(blackpick), FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(greypick), FALSE, FALSE, 0);

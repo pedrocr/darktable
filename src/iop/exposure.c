@@ -391,8 +391,8 @@ void gui_init(struct dt_iop_module_t *self)
 
   self->request_color_pick = 0;
 
-  self->widget = GTK_WIDGET(gtk_hbox_new(FALSE, 0));
-  g->vbox2 = GTK_VBOX(gtk_vbox_new(FALSE, DT_BAUHAUS_SPACE));
+  self->widget = GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
+  g->vbox2 = GTK_VBOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE));
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(g->vbox2), TRUE, TRUE, 5);
 
   g->black = dt_bauhaus_slider_new_with_range(self, -0.1, 0.1, .001, p->black, 3);
@@ -414,7 +414,7 @@ void gui_init(struct dt_iop_module_t *self)
   g_object_set(G_OBJECT(g->autoexpp), "tooltip-text", _("percentage of bright values clipped out"), (char *)NULL);
   gtk_widget_set_sensitive(GTK_WIDGET(g->autoexpp), FALSE);
 
-  GtkHBox *hbox = GTK_HBOX(gtk_hbox_new(FALSE, 0));
+  GtkHBox *hbox = GTK_HBOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
   gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(g->autoexp), FALSE, TRUE, 0);
   gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(g->autoexpp), TRUE, TRUE, 0);
 

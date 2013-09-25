@@ -113,7 +113,7 @@ gui_init (dt_lib_module_t *self)
   memset(self->data, 0, sizeof(dt_lib_location_t));
   dt_lib_location_t *lib = self->data;
 
-  self->widget = gtk_vbox_new(FALSE, 5);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
 
   /* add search box */
   lib->search = GTK_ENTRY(gtk_entry_new());
@@ -124,7 +124,7 @@ gui_init (dt_lib_module_t *self)
                    G_CALLBACK (_lib_location_entry_activated), (gpointer)self);
 
   /* add result vbox */
-  lib->result = gtk_vbox_new(FALSE,2);
+  lib->result = gtk_box_new(GTK_ORIENTATION_VERTICAL,2);
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(lib->result), TRUE, FALSE, 2);
 }
 
@@ -141,8 +141,8 @@ static GtkWidget *_lib_location_place_widget_new(_lib_location_result_t *place)
   GtkWidget *eb, *hb, *vb, *w;
   char location[512];
   eb = gtk_event_box_new();
-  hb = gtk_hbox_new(FALSE,2);
-  vb = gtk_vbox_new(FALSE,2);
+  hb = gtk_box_new(GTK_ORIENTATION_HORIZONTAL,2);
+  vb = gtk_box_new(GTK_ORIENTATION_VERTICAL,2);
 
   /* add name */
   w = gtk_label_new(place->name);

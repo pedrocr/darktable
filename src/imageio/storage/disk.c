@@ -95,7 +95,7 @@ gui_init (dt_imageio_module_storage_t *self)
 {
   disk_t *d = (disk_t *)malloc(sizeof(disk_t));
   self->gui_data = (void *)d;
-  self->widget = gtk_hbox_new(FALSE, 5);
+  self->widget = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
   GtkWidget *widget;
 
   widget = gtk_entry_new();

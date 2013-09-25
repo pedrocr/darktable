@@ -1855,7 +1855,7 @@ gui_init (dt_lib_module_t *self)
   memset(d, 0, sizeof(dt_lib_collect_t));
 
   self->data = (void *)d;
-  self->widget = gtk_vbox_new(FALSE, 5);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
   gtk_widget_set_size_request(self->widget, 100, -1);
   d->active_rule = 0;
   d->params = (dt_lib_collect_params_t*)malloc(sizeof(dt_lib_collect_params_t));
@@ -1867,7 +1867,7 @@ gui_init (dt_lib_module_t *self)
   {
     d->rule[i].num = i;
     d->rule[i].typing = FALSE;
-    box = GTK_BOX(gtk_hbox_new(FALSE, 5));
+    box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
     d->rule[i].hbox = GTK_WIDGET(box);
     gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(box), TRUE, TRUE, 0);
     w = gtk_combo_box_text_new();
@@ -1919,7 +1919,7 @@ gui_init (dt_lib_module_t *self)
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(sw), TRUE, TRUE, 0);
 
 
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 5);
+  GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
   d->box = GTK_BOX(vbox);
 
   GtkWidget *sw2 = gtk_scrolled_window_new(NULL, NULL);

@@ -299,7 +299,7 @@ gui_init (dt_lib_module_t *self)
   dt_lib_recentcollect_t *d = (dt_lib_recentcollect_t *)malloc(sizeof(dt_lib_recentcollect_t));
   memset(d,0,sizeof(dt_lib_recentcollect_t));
   self->data = (void *)d;
-  self->widget = gtk_vbox_new(FALSE, 0);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   d->inited = 0;
 
   // add buttons in the list, set them all to invisible

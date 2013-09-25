@@ -88,10 +88,10 @@ gui_init (dt_lib_module_t *self)
 {
   dt_lib_select_t *d = (dt_lib_select_t*)malloc(sizeof(dt_lib_select_t));
   self->data = d;
-  self->widget = gtk_vbox_new(TRUE, 5);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
   GtkBox *hbox;
   GtkWidget *button;
-  hbox = GTK_BOX(gtk_hbox_new(TRUE, 5));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
 
   button = gtk_button_new_with_label(_("select all"));
   d->select_all_button = button;
@@ -106,7 +106,7 @@ gui_init (dt_lib_module_t *self)
   g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(button_clicked), (gpointer)1);
 
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(hbox), TRUE, TRUE, 0);
-  hbox = GTK_BOX(gtk_hbox_new(TRUE, 5));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
 
   button = gtk_button_new_with_label(_("invert selection"));
   g_object_set(G_OBJECT(button), "tooltip-text", _("select unselected images\nin current collection (ctrl-!)"), (char *)NULL);
@@ -121,7 +121,7 @@ gui_init (dt_lib_module_t *self)
   g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(button_clicked), (gpointer)3);
 
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(hbox), TRUE, TRUE, 0);
-  hbox = GTK_BOX(gtk_hbox_new(TRUE, 5));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
 
   button = gtk_button_new_with_label(_("select untouched"));
   d->select_untouched_button = button;
@@ -129,7 +129,7 @@ gui_init (dt_lib_module_t *self)
   gtk_box_pack_start(hbox, button, TRUE, TRUE, 0);
   g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(button_clicked), (gpointer)4);
   // Just a filler, remove if a new button is added
-  gtk_box_pack_start(hbox,gtk_hbox_new(TRUE, 5),TRUE,TRUE,0);
+  gtk_box_pack_start(hbox,gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5),TRUE,TRUE,0);
 
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(hbox), TRUE, TRUE, 0);
 }

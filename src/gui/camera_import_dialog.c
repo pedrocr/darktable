@@ -211,8 +211,8 @@ _camera_gconf_widget_t *_camera_import_gconf_widget(_camera_import_dialog_t *dlg
   _camera_gconf_widget_t *gcw=malloc(sizeof(_camera_gconf_widget_t));
   memset(gcw,0,sizeof(_camera_gconf_widget_t));
   GtkWidget *vbox,*hbox;
-  gcw->widget=vbox=GTK_WIDGET(gtk_vbox_new(FALSE,0));
-  hbox=GTK_WIDGET(gtk_hbox_new(FALSE,0));
+  gcw->widget=vbox=GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_VERTICAL,0));
+  hbox=GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0));
   g_object_set_data(G_OBJECT(vbox),"gconf:string",confstring);
   gcw->dialog=dlg;
 
@@ -271,7 +271,7 @@ void _camera_import_dialog_new(_camera_import_dialog_t *data)
   data->vp->filename="DSC_0235.JPG";
 
   // IMPORT PAGE
-  data->import.page=gtk_vbox_new(FALSE,5);
+  data->import.page=gtk_box_new(GTK_ORIENTATION_VERTICAL,5);
   gtk_container_set_border_width(GTK_CONTAINER(data->import.page),5);
 
   // Top info
@@ -312,7 +312,7 @@ void _camera_import_dialog_new(_camera_import_dialog_t *data)
 
 
   // SETTINGS PAGE
-  data->settings.page=gtk_vbox_new(FALSE,5);
+  data->settings.page=gtk_box_new(GTK_ORIENTATION_VERTICAL,5);
   gtk_container_set_border_width(GTK_CONTAINER(data->settings.page),5);
 
   // general settings
@@ -325,7 +325,7 @@ void _camera_import_dialog_new(_camera_import_dialog_t *data)
   gtk_box_pack_start(GTK_BOX(data->settings.page), data->settings.general.ignore_jpeg, FALSE, FALSE, 0);
   g_signal_connect (G_OBJECT(data->settings.general.ignore_jpeg), "clicked",G_CALLBACK (_check_button_callback),data);
 
-  GtkWidget *hbox=gtk_hbox_new(FALSE,5);
+  GtkWidget *hbox=gtk_box_new(GTK_ORIENTATION_HORIZONTAL,5);
   data->settings.general.date_override=gtk_check_button_new_with_label(_("override today's date"));
   gtk_box_pack_start(GTK_BOX(hbox),data->settings.general.date_override,FALSE,FALSE,0);
   g_object_set(data->settings.general.date_override,"tooltip-text",_("check this, if you want to override the timestamp used when expanding variables:\n$(YEAR), $(MONTH), $(DAY),\n$(HOUR), $(MINUTE), $(SECONDS)"),(char *)NULL);

@@ -1055,7 +1055,7 @@ void gui_init(struct dt_iop_module_t *self)
   dt_iop_borders_gui_data_t *g = (dt_iop_borders_gui_data_t *)self->gui_data;
   dt_iop_borders_params_t *p = (dt_iop_borders_params_t *)self->params;
 
-  self->widget = gtk_vbox_new(FALSE, DT_BAUHAUS_SPACE);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE);
 
   g->size = dt_bauhaus_slider_new_with_range(self, 0.0, 50.0, 0.5, p->size*100.0, 2);
   dt_bauhaus_widget_set_label(g->size, NULL, _("border size"));
@@ -1109,7 +1109,7 @@ void gui_init(struct dt_iop_module_t *self)
   g_object_set(G_OBJECT(g->frame_offset), "tooltip-text", _("offset of the frame line beginning on picture side"), (char *)NULL);
   gtk_box_pack_start(GTK_BOX(self->widget), g->frame_offset, TRUE, TRUE, 0);
 
-  GtkWidget *box = gtk_hbox_new(FALSE, 0);
+  GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   g->colorpick = DTGTK_BUTTON(dtgtk_button_new(dtgtk_cairo_paint_color, CPF_IGNORE_FG_STATE | CPF_STYLE_FLAT));
   gtk_widget_set_size_request(GTK_WIDGET(g->colorpick), 24, 24);
   GtkWidget *label = dtgtk_reset_label_new (_("border color"), self, &p->color, 3*sizeof(float));
@@ -1124,7 +1124,7 @@ void gui_init(struct dt_iop_module_t *self)
   gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(g->border_picker), FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(self->widget), box, TRUE, TRUE, 0);
 
-  box = gtk_hbox_new(FALSE, 0);
+  box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   g->frame_colorpick = DTGTK_BUTTON(dtgtk_button_new(dtgtk_cairo_paint_color, CPF_IGNORE_FG_STATE | CPF_STYLE_FLAT));
   gtk_widget_set_size_request(GTK_WIDGET(g->frame_colorpick), 24, 24);
   label = dtgtk_reset_label_new (_("frame line color"), self, &p->color, 3*sizeof(float));

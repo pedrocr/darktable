@@ -105,7 +105,7 @@ commit_namepattern(GtkEntry *entry, GdkEvent* bob, gpointer user_data)
 void
 gui_init (dt_lib_module_t *self)
 {
-  self->widget = gtk_vbox_new(TRUE, 5);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
   self->data = malloc(sizeof(dt_lib_capture_t));
   memset(self->data,0,sizeof(dt_lib_capture_t));
 
@@ -113,19 +113,19 @@ gui_init (dt_lib_module_t *self)
   dt_lib_capture_t *lib=self->data;
 
   // Setup gui
-  self->widget = gtk_vbox_new(FALSE, 5);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
   GtkBox *hbox, *vbox1, *vbox2;
   GtkBox *hbox_namepattern, *vbox1_namepattern, *vbox2_namepattern;
 
   // Session settings
   //gtk_box_pack_start(GTK_BOX(self->widget), dtgtk_label_new("session settings",DARKTABLE_LABEL_TAB|DARKTABLE_LABEL_ALIGN_RIGHT), TRUE, TRUE, 0);
-  hbox = GTK_BOX(gtk_hbox_new(FALSE, 5));
-  vbox1 = GTK_BOX(gtk_vbox_new(TRUE, 5));
-  vbox2 = GTK_BOX(gtk_vbox_new(TRUE, 5));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
+  vbox1 = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
+  vbox2 = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
 
-  hbox_namepattern = GTK_BOX(gtk_hbox_new(FALSE, 5));
-  vbox1_namepattern = GTK_BOX(gtk_vbox_new(TRUE, 5));
-  vbox2_namepattern = GTK_BOX(gtk_vbox_new(TRUE, 5));
+  hbox_namepattern = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
+  vbox1_namepattern = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
+  vbox2_namepattern = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
 
   lib->gui.label1 = GTK_LABEL(gtk_label_new(_("jobcode")));
   gtk_misc_set_alignment(GTK_MISC(lib->gui.label1 ), 0.0, 0.5);

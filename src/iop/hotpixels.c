@@ -301,7 +301,7 @@ void gui_init     (dt_iop_module_t *self)
   dt_iop_hotpixels_params_t *p = (dt_iop_hotpixels_params_t*)self->params;
   g->pixels_fixed = -1;
 
-  self->widget = gtk_vbox_new(FALSE, DT_BAUHAUS_SPACE);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE);
   g_signal_connect(G_OBJECT(self->widget), "expose-event", G_CALLBACK(expose), self);
 
   /* threshold */
@@ -327,7 +327,7 @@ void gui_init     (dt_iop_module_t *self)
   g_signal_connect(G_OBJECT(g->permissive), "toggled", G_CALLBACK(permissive_callback), self);
 
 
-  GtkHBox *hbox1 = GTK_HBOX(gtk_hbox_new(FALSE, 0));
+  GtkHBox *hbox1 = GTK_HBOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
   g->markfixed  = GTK_TOGGLE_BUTTON(gtk_check_button_new_with_label(_("mark fixed pixels")));
   gtk_toggle_button_set_active(g->markfixed, p->markfixed);
   gtk_box_pack_start(GTK_BOX(hbox1), GTK_WIDGET(g->markfixed), TRUE, TRUE, 0);

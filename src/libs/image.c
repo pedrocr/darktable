@@ -132,10 +132,10 @@ gui_init (dt_lib_module_t *self)
 {
   dt_lib_image_t *d = (dt_lib_image_t *)malloc(sizeof(dt_lib_image_t));
   self->data = (void *)d;
-  self->widget = gtk_vbox_new(TRUE, 5);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
   GtkBox *hbox;
   GtkWidget *button;
-  hbox = GTK_BOX(gtk_hbox_new(TRUE, 5));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
 
   button = gtk_button_new_with_label(_("remove"));
   d->remove_button = button;
@@ -150,7 +150,7 @@ gui_init (dt_lib_module_t *self)
   g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(button_clicked), (gpointer)1);
 
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(hbox), TRUE, TRUE, 0);
-  hbox = GTK_BOX(gtk_hbox_new(TRUE, 5));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
 
   button = gtk_button_new_with_label(_("move"));
   d->move_button = button;
@@ -166,7 +166,7 @@ gui_init (dt_lib_module_t *self)
 
 
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(hbox), TRUE, TRUE, 0);
-  hbox = GTK_BOX(gtk_hbox_new(TRUE, 5));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
 
   button = gtk_button_new_with_label(_("create HDR"));
   d->create_hdr_button = button;
@@ -181,9 +181,9 @@ gui_init (dt_lib_module_t *self)
   g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(button_clicked), (gpointer)3);
 
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(hbox), TRUE, TRUE, 0);
-  hbox = GTK_BOX(gtk_hbox_new(TRUE, 5));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
 
-  GtkBox *hbox2 = GTK_BOX(gtk_hbox_new(TRUE, 5));
+  GtkBox *hbox2 = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
   button = dtgtk_button_new(dtgtk_cairo_paint_refresh, 0);
   d->rotate_ccw_button = button;
   g_object_set(G_OBJECT(button), "tooltip-text", _("rotate selected images 90 degrees CCW"), (char *)NULL);
@@ -204,7 +204,7 @@ gui_init (dt_lib_module_t *self)
   g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(button_clicked), (gpointer)6);
 
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(hbox), TRUE, TRUE, 0);
-  hbox = GTK_BOX(gtk_hbox_new(TRUE, 5));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
 
   button = gtk_button_new_with_label(_("cache locally"));
   d->cache_button = button;
@@ -219,7 +219,7 @@ gui_init (dt_lib_module_t *self)
   g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(button_clicked), (gpointer)13);
 
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(hbox), TRUE, TRUE, 0);
-  hbox = GTK_BOX(gtk_hbox_new(TRUE, 5));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
 
   button = gtk_button_new_with_label(_("group"));
   d->group_button = button;

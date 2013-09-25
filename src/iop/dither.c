@@ -550,8 +550,8 @@ void gui_init(struct dt_iop_module_t *self)
   dt_iop_dither_gui_data_t *g = (dt_iop_dither_gui_data_t *)self->gui_data;
   dt_iop_dither_params_t *p = (dt_iop_dither_params_t *)self->params;
 
-  self->widget = gtk_vbox_new(FALSE, DT_BAUHAUS_SPACE);
-  g->random = gtk_vbox_new(FALSE, DT_BAUHAUS_SPACE);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE);
+  g->random = gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE);
 
   g->dither_type = dt_bauhaus_combobox_new(self);
   dt_bauhaus_combobox_add(g->dither_type, _("random"));
@@ -579,7 +579,7 @@ void gui_init(struct dt_iop_module_t *self)
   g_object_set (GTK_OBJECT(g->range), "tooltip-text", _("the gradient range where to apply random dither"), (char *)NULL);
   g->range_label = gtk_label_new(_("gradient range"));
 
-  GtkWidget *rlabel = gtk_hbox_new(FALSE,0);
+  GtkWidget *rlabel = gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0);
   gtk_box_pack_start(GTK_BOX(rlabel), GTK_WIDGET(g->range_label), FALSE, FALSE, 0);
 #endif
 

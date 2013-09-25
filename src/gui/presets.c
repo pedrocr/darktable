@@ -376,14 +376,14 @@ edit_preset (const char *name_in, dt_iop_module_t *module)
   GtkWidget *alignment = gtk_alignment_new(0.5, 0.5, 1.0, 1.0);
   gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 5, 5, 5, 5);
   gtk_container_add (content_area, alignment);
-  GtkBox *box = GTK_BOX(gtk_vbox_new(FALSE, 5));
+  GtkBox *box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
   gtk_container_add (GTK_CONTAINER(alignment), GTK_WIDGET(box));
   GtkWidget *label;
-  // GtkBox *vbox1 = GTK_BOX(gtk_vbox_new(TRUE, 5));
+  // GtkBox *vbox1 = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
 
-  GtkBox *vbox2 = GTK_BOX(gtk_vbox_new(TRUE, 5));
-  GtkBox *vbox3 = GTK_BOX(gtk_vbox_new(TRUE, 5));
-  GtkBox *vbox4 = GTK_BOX(gtk_vbox_new(TRUE, 5));
+  GtkBox *vbox2 = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
+  GtkBox *vbox3 = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
+  GtkBox *vbox4 = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
 
   dt_gui_presets_edit_dialog_t *g = (dt_gui_presets_edit_dialog_t *)malloc(sizeof(dt_gui_presets_edit_dialog_t));
   g->old_id = -1;
@@ -406,8 +406,8 @@ edit_preset (const char *name_in, dt_iop_module_t *module)
   g_signal_connect(G_OBJECT(g->autoapply), "toggled", G_CALLBACK(check_buttons_activated), g);
   g_signal_connect(G_OBJECT(g->filter),    "toggled", G_CALLBACK(check_buttons_activated), g);
 
-  g->details   = GTK_BOX(gtk_hbox_new(FALSE, 0));
-  GtkBox *hbox = GTK_BOX(gtk_hbox_new(TRUE, 5));
+  g->details   = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
+  GtkBox *hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
   gtk_box_pack_start(box,  GTK_WIDGET(g->details),  FALSE, FALSE, 0);
   gtk_box_pack_start(g->details, GTK_WIDGET(hbox),  FALSE, FALSE, 0);
   gtk_box_pack_start(hbox, GTK_WIDGET(vbox2), TRUE, TRUE, 0);

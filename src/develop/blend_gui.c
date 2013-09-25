@@ -935,7 +935,7 @@ void dt_iop_gui_init_blendif(GtkVBox *blendw, dt_iop_module_t *module)
 {
   dt_iop_gui_blend_data_t *bd = (dt_iop_gui_blend_data_t*)module->blend_data;
 
-  bd->blendif_box = GTK_VBOX(gtk_vbox_new(FALSE,DT_BAUHAUS_SPACE));
+  bd->blendif_box = GTK_VBOX(gtk_box_new(GTK_ORIENTATION_VERTICAL,DT_BAUHAUS_SPACE));
 
   /* create and add blendif support if module supports it */
   if (bd->blendif_support)
@@ -1045,18 +1045,18 @@ void dt_iop_gui_init_blendif(GtkVBox *blendw, dt_iop_module_t *module)
         assert(FALSE);		// blendif not supported for RAW, which is already catched upstream; we should not get here
     }
 
-    GtkWidget *uplabel = gtk_hbox_new(FALSE,0);
-    GtkWidget *lowlabel = gtk_hbox_new(FALSE,0);
-    GtkWidget *upslider = gtk_hbox_new(FALSE,0);
-    GtkWidget *lowslider = gtk_hbox_new(FALSE,0);
-    GtkWidget *notebook = gtk_vbox_new(FALSE,0);
-    GtkWidget *header = gtk_hbox_new(FALSE, 0);
+    GtkWidget *uplabel = gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0);
+    GtkWidget *lowlabel = gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0);
+    GtkWidget *upslider = gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0);
+    GtkWidget *lowslider = gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0);
+    GtkWidget *notebook = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
+    GtkWidget *header = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
     bd->channel_tabs = GTK_NOTEBOOK(gtk_notebook_new());
 
     for(int ch=0; ch<maxchannels; ch++)
     {
-      gtk_notebook_append_page(GTK_NOTEBOOK(bd->channel_tabs), GTK_WIDGET(gtk_hbox_new(FALSE,0)), gtk_label_new(labels[ch]));
+      gtk_notebook_append_page(GTK_NOTEBOOK(bd->channel_tabs), GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0)), gtk_label_new(labels[ch]));
       g_object_set(G_OBJECT(gtk_notebook_get_tab_label(bd->channel_tabs, gtk_notebook_get_nth_page(bd->channel_tabs, -1))), "tooltip-text", tooltips[ch], NULL);
     }
 
@@ -1216,7 +1216,7 @@ void dt_iop_gui_init_masks(GtkVBox *blendw, dt_iop_module_t *module)
 {
   dt_iop_gui_blend_data_t *bd = (dt_iop_gui_blend_data_t*)module->blend_data;
 
-  bd->masks_box = GTK_VBOX(gtk_vbox_new(FALSE,DT_BAUHAUS_SPACE));
+  bd->masks_box = GTK_VBOX(gtk_box_new(GTK_ORIENTATION_VERTICAL,DT_BAUHAUS_SPACE));
 
   /* create and add masks support if module supports it */
   if (bd->masks_support)
@@ -1226,8 +1226,8 @@ void dt_iop_gui_init_masks(GtkVBox *blendw, dt_iop_module_t *module)
     bd->masks_combo_ids = NULL;
     bd->masks_shown = DT_MASKS_EDIT_OFF;
 
-    GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
-    GtkWidget *abox = gtk_hbox_new(FALSE, 0);
+    GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    GtkWidget *abox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
     bd->masks_combo = dt_bauhaus_combobox_new(module);
     dt_bauhaus_widget_set_label(bd->masks_combo, _("blend"), _("drawn mask"));
@@ -1718,12 +1718,12 @@ void dt_iop_gui_init_blending(GtkWidget *iopw, dt_iop_module_t *module)
     g_signal_connect (G_OBJECT(bd->suppress), "toggled",
                       G_CALLBACK (_blendop_blendif_suppress_toggled), module);
 
-    GtkWidget *box = gtk_vbox_new(FALSE, DT_BAUHAUS_SPACE);
+    GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE);
     gtk_box_pack_start(GTK_BOX(iopw), GTK_WIDGET(box), TRUE, TRUE, 0);
 
     gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(bd->masks_modes_combo), TRUE, TRUE, 0);
 
-    bd->top_box = GTK_VBOX(gtk_vbox_new(FALSE,DT_BAUHAUS_SPACE));
+    bd->top_box = GTK_VBOX(gtk_box_new(GTK_ORIENTATION_VERTICAL,DT_BAUHAUS_SPACE));
     gtk_box_pack_start(GTK_BOX(bd->top_box), bd->blend_modes_combo, TRUE, TRUE,0);
     gtk_box_pack_start(GTK_BOX(bd->top_box), bd->opacity_slider, TRUE, TRUE,0);
     gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(bd->top_box), TRUE, TRUE, 0);
@@ -1731,11 +1731,11 @@ void dt_iop_gui_init_blending(GtkWidget *iopw, dt_iop_module_t *module)
     dt_iop_gui_init_masks(GTK_VBOX(iopw), module);
     dt_iop_gui_init_blendif(GTK_VBOX(iopw), module);
 
-    GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
+    GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(hbox), bd->radius_slider, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(bd->suppress), FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(bd->showmask), FALSE, FALSE, 0);
-    bd->bottom_box = GTK_VBOX(gtk_vbox_new(FALSE, DT_BAUHAUS_SPACE));
+    bd->bottom_box = GTK_VBOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE));
     gtk_box_pack_start(GTK_BOX(bd->bottom_box), GTK_WIDGET(bd->masks_combine_combo), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(bd->bottom_box), GTK_WIDGET(bd->masks_invert_combo), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(bd->bottom_box), hbox, TRUE, TRUE, 0);

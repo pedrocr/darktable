@@ -1425,17 +1425,17 @@ void gui_init (struct dt_iop_module_t *self)
   c->dragging = 0;
   c->x_move = -1;
   c->mouse_radius = 1.0/BANDS;
-  self->widget = gtk_vbox_new(FALSE, DT_BAUHAUS_SPACE);
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE);
+  GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_pack_start(GTK_BOX(self->widget), vbox, FALSE, FALSE, 0);
 
   c->channel_tabs = GTK_NOTEBOOK(gtk_notebook_new());
 
-  gtk_notebook_append_page(GTK_NOTEBOOK(c->channel_tabs), GTK_WIDGET(gtk_hbox_new(FALSE,0)), gtk_label_new(_("luma")));
+  gtk_notebook_append_page(GTK_NOTEBOOK(c->channel_tabs), GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0)), gtk_label_new(_("luma")));
   g_object_set(G_OBJECT(gtk_notebook_get_tab_label(c->channel_tabs, gtk_notebook_get_nth_page(c->channel_tabs, -1))), "tooltip-text", _("change lightness at each feature size"), NULL);
-  gtk_notebook_append_page(GTK_NOTEBOOK(c->channel_tabs), GTK_WIDGET(gtk_hbox_new(FALSE,0)), gtk_label_new(_("chroma")));
+  gtk_notebook_append_page(GTK_NOTEBOOK(c->channel_tabs), GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0)), gtk_label_new(_("chroma")));
   g_object_set(G_OBJECT(gtk_notebook_get_tab_label(c->channel_tabs, gtk_notebook_get_nth_page(c->channel_tabs, -1))), "tooltip-text", _("change color saturation at each feature size"), NULL);
-  gtk_notebook_append_page(GTK_NOTEBOOK(c->channel_tabs), GTK_WIDGET(gtk_hbox_new(FALSE,0)), gtk_label_new(_("sharpness")));
+  gtk_notebook_append_page(GTK_NOTEBOOK(c->channel_tabs), GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0)), gtk_label_new(_("sharpness")));
   g_object_set(G_OBJECT(gtk_notebook_get_tab_label(c->channel_tabs, gtk_notebook_get_nth_page(c->channel_tabs, -1))), "tooltip-text", _("sharpness of edges at each feature size"), NULL);
 
   gtk_widget_show_all(GTK_WIDGET(gtk_notebook_get_nth_page(c->channel_tabs, c->channel)));

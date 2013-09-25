@@ -494,16 +494,16 @@ void gui_init(struct dt_iop_module_t *self)
   c->mouse_x = c->mouse_y = -1.0;
   c->selected = -1;
 
-  self->widget = gtk_vbox_new(FALSE, DT_BAUHAUS_SPACE);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE);
 
   // tabs
   c->channel_tabs = GTK_NOTEBOOK(gtk_notebook_new());
 
-  gtk_notebook_append_page(GTK_NOTEBOOK(c->channel_tabs), GTK_WIDGET(gtk_hbox_new(FALSE,0)), gtk_label_new(_("  L  ")));
+  gtk_notebook_append_page(GTK_NOTEBOOK(c->channel_tabs), GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0)), gtk_label_new(_("  L  ")));
   g_object_set(G_OBJECT(gtk_notebook_get_tab_label(c->channel_tabs, gtk_notebook_get_nth_page(c->channel_tabs, -1))), "tooltip-text", _("tonecurve for L channel"), NULL);
-  gtk_notebook_append_page(GTK_NOTEBOOK(c->channel_tabs), GTK_WIDGET(gtk_hbox_new(FALSE,0)), gtk_label_new(_("  a  ")));
+  gtk_notebook_append_page(GTK_NOTEBOOK(c->channel_tabs), GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0)), gtk_label_new(_("  a  ")));
   g_object_set(G_OBJECT(gtk_notebook_get_tab_label(c->channel_tabs, gtk_notebook_get_nth_page(c->channel_tabs, -1))), "tooltip-text", _("tonecurve for a channel"), NULL);
-  gtk_notebook_append_page(GTK_NOTEBOOK(c->channel_tabs), GTK_WIDGET(gtk_hbox_new(FALSE,0)), gtk_label_new(_("  b  ")));
+  gtk_notebook_append_page(GTK_NOTEBOOK(c->channel_tabs), GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0)), gtk_label_new(_("  b  ")));
   g_object_set(G_OBJECT(gtk_notebook_get_tab_label(c->channel_tabs, gtk_notebook_get_nth_page(c->channel_tabs, -1))), "tooltip-text", _("tonecurve for b channel"), NULL);
 
   gtk_widget_show_all(GTK_WIDGET(gtk_notebook_get_nth_page(c->channel_tabs, c->channel)));
@@ -514,11 +514,11 @@ void gui_init(struct dt_iop_module_t *self)
   GtkWidget *tb = dtgtk_togglebutton_new(dtgtk_cairo_paint_colorpicker, CPF_STYLE_FLAT);
   g_object_set(G_OBJECT(tb), "tooltip-text", _("pick GUI color from image"), (char *)NULL);
 
-  GtkWidget *notebook = gtk_hbox_new(FALSE,0);
+  GtkWidget *notebook = gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0);
   gtk_box_pack_start(GTK_BOX(notebook), GTK_WIDGET(c->channel_tabs), FALSE, FALSE, 0);
   gtk_box_pack_end(GTK_BOX(notebook), GTK_WIDGET(tb), FALSE, FALSE, 0);
 
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_pack_start(GTK_BOX(self->widget), vbox, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(notebook), TRUE, TRUE, 0);
 

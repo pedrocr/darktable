@@ -328,7 +328,7 @@ gui_init (dt_lib_module_t *self)
   dt_lib_styles_t *d = (dt_lib_styles_t *)malloc (sizeof (dt_lib_styles_t));
   self->data = (void *)d;
   d->edit_button = NULL;
-  self->widget = gtk_vbox_new (FALSE, 5);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
   GtkWidget *w;
   GtkWidget *scrolled;
 
@@ -374,8 +374,8 @@ gui_init (dt_lib_module_t *self)
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (d->duplicate), dt_conf_get_bool("ui_last/styles_create_duplicate"));
   g_object_set (d->duplicate, "tooltip-text", _("creates a duplicate of the image before applying style"), (char *)NULL);
 
-  GtkWidget *hbox1 = gtk_hbox_new(TRUE, 5);
-  GtkWidget *hbox2 = gtk_hbox_new(TRUE, 5);
+  GtkWidget *hbox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+  GtkWidget *hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
   gtk_box_pack_start(GTK_BOX (self->widget),hbox1,TRUE,FALSE,0);
   gtk_box_pack_start(GTK_BOX (self->widget),hbox2,TRUE,FALSE,0);
 

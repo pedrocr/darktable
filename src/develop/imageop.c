@@ -314,7 +314,7 @@ gui_init_simple_wrapper(dt_iop_module_t *self)
   GtkWidget **g = (GtkWidget**)self->gui_data;
 
   // build the gui
-  self->widget = gtk_vbox_new(FALSE, DT_BAUHAUS_SPACE);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE);
   dt_gui_simple_element_t *it = gui->elements;
   int i=0;
   while(it->common.type != DT_SIMPLE_GUI_NONE)
@@ -1972,9 +1972,9 @@ GtkWidget *dt_iop_gui_get_expander(dt_iop_module_t *module)
 {
   int bs = 12;
   char tooltip[512];
-  GtkWidget *expander = gtk_vbox_new(FALSE, 3);
+  GtkWidget *expander = gtk_box_new(GTK_ORIENTATION_VERTICAL, 3);
   GtkWidget *header_evb = gtk_event_box_new();
-  GtkWidget *header = gtk_hbox_new(FALSE, 0);
+  GtkWidget *header = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   GtkWidget *pluginui_frame = gtk_frame_new(NULL);
   GtkWidget *pluginui = gtk_event_box_new();
 
@@ -2087,7 +2087,7 @@ GtkWidget *dt_iop_gui_get_expander(dt_iop_module_t *module)
 
 
   /* add the blending ui if supported */
-  GtkWidget * iopw = gtk_vbox_new(FALSE, 3 * DT_BAUHAUS_SPACE);
+  GtkWidget * iopw = gtk_box_new(GTK_ORIENTATION_VERTICAL, 3 * DT_BAUHAUS_SPACE);
   gtk_box_pack_start(GTK_BOX(iopw), module->widget, TRUE, TRUE, 0);
   dt_iop_gui_init_blending(iopw, module);
 

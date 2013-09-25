@@ -86,7 +86,7 @@ void gui_init(dt_lib_module_t *self)
   self->data = (void *)d;
   memset(d,0,sizeof(dt_lib_tool_filter_t));
 
-  self->widget = gtk_hbox_new(FALSE,2);
+  self->widget = gtk_box_new(GTK_ORIENTATION_HORIZONTAL,2);
 
   /**/
   GtkWidget *widget;

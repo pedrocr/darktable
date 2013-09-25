@@ -8,9 +8,9 @@
 	<xsl:variable name="tab_start"> (GtkWidget *dialog, GtkWidget *tab, void (*hardcoded_part)(GtkWidget *vbox1, GtkWidget *vbox2))
 {
   GtkWidget *widget, *label, *labelev;
-  GtkWidget *hbox = gtk_hbox_new(5, FALSE);
-  GtkWidget *vbox1 = gtk_vbox_new(5, TRUE);
-  GtkWidget *vbox2 = gtk_vbox_new(5, TRUE);
+  GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+  GtkWidget *vbox1 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+  GtkWidget *vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
   char tooltip[1024];
   gtk_box_pack_start(GTK_BOX(hbox), vbox1, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 0);

@@ -282,8 +282,8 @@ void gui_init(struct dt_iop_module_t *self)
   dt_iop_anlfyeni_gui_data_t *g = (dt_iop_anlfyeni_gui_data_t *)self->gui_data;
   dt_iop_anlfyeni_params_t *p = (dt_iop_anlfyeni_params_t *)self->params;
 
-  self->widget = GTK_WIDGET(gtk_hbox_new(FALSE, 0));
-  g->vbox = GTK_VBOX(gtk_vbox_new(FALSE, DT_GUI_IOP_MODULE_CONTROL_SPACING));
+  self->widget = GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
+  g->vbox = GTK_VBOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_GUI_IOP_MODULE_CONTROL_SPACING));
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(g->vbox), TRUE, TRUE, 5);
 
   g->scale1 = DTGTK_SLIDER(dtgtk_slider_new_with_range(DARKTABLE_SLIDER_BAR,0.001, 0.07, 0.001, p->alpha, 3));

@@ -196,7 +196,7 @@ void gui_init(dt_lib_module_t *self)
 
   memset(d,0,sizeof(dt_lib_keywords_t));
   self->data = (void *)d;
-  self->widget = gtk_vbox_new(FALSE, 5);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
 
   /* Create a new scrolled window, with scrollbars only if needed */
   GtkWidget *scrolled_window;

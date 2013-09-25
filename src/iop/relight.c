@@ -374,7 +374,7 @@ void gui_init(struct dt_iop_module_t *self)
   dt_iop_relight_gui_data_t *g = (dt_iop_relight_gui_data_t *)self->gui_data;
   dt_iop_relight_params_t *p = (dt_iop_relight_params_t *)self->params;
 
-  self->widget = gtk_vbox_new(FALSE, DT_BAUHAUS_SPACE);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE);
 
   g_signal_connect (G_OBJECT (self->widget), "expose-event", G_CALLBACK (expose), self);
 
@@ -395,7 +395,7 @@ void gui_init(struct dt_iop_module_t *self)
                     G_CALLBACK (width_callback), self);
 
   /* lightnessslider */
-  GtkBox *hbox=GTK_BOX (gtk_hbox_new (FALSE,2));
+  GtkBox *hbox=GTK_BOX (gtk_box_new(GTK_ORIENTATION_HORIZONTAL,2));
   int lightness=32768;
   g->gslider1=DTGTK_GRADIENT_SLIDER (dtgtk_gradient_slider_new_with_color ((GdkColor)
   {

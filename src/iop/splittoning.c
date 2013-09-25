@@ -565,11 +565,11 @@ gui_init_tab(
   g_object_set(G_OBJECT(saturation), "tooltip-text", _("select the saturation tone"), (char *)NULL);
 
   // pack the widgets
-  GtkWidget* vbox = gtk_vbox_new(FALSE, DT_BAUHAUS_SPACE);
+  GtkWidget* vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE);
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(hue), FALSE, TRUE, 0);
   gtk_box_pack_end(GTK_BOX(vbox), GTK_WIDGET(saturation), FALSE, TRUE, 0);
 
-  GtkWidget* hbox = GTK_WIDGET(gtk_hbox_new(FALSE, 0));
+  GtkWidget* hbox = GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
   gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(vbox), TRUE, TRUE, 0);
   gtk_box_pack_end(GTK_BOX(hbox), GTK_WIDGET(color),FALSE,FALSE,0);
 
@@ -582,7 +582,7 @@ void gui_init(struct dt_iop_module_t *self)
   dt_iop_splittoning_gui_data_t *g = (dt_iop_splittoning_gui_data_t *)self->gui_data;
   dt_iop_splittoning_params_t *p = (dt_iop_splittoning_params_t *)self->params;
 
-  self->widget = GTK_WIDGET(gtk_vbox_new(FALSE, DT_BAUHAUS_SPACE));
+  self->widget = GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE));
 
   // Shadows
   gui_init_tab(self, _("shadows"), &g->colorpick1, &g->gslider1, &g->gslider2);
@@ -591,8 +591,8 @@ void gui_init(struct dt_iop_module_t *self)
   gui_init_tab(self, _("highlights"), &g->colorpick2, &g->gslider3, &g->gslider4);
 
   // Additional parameters
-  GtkWidget* hbox=GTK_WIDGET(gtk_hbox_new(FALSE, 0));
-  GtkWidget* vbox = GTK_WIDGET(gtk_vbox_new(FALSE, 0));
+  GtkWidget* hbox=GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
+  GtkWidget* vbox = GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0));
   gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(vbox), TRUE, TRUE, 0);
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(hbox), TRUE, TRUE, 0);
 

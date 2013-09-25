@@ -248,10 +248,10 @@ gui_init (dt_lib_module_t *self)
 {
   dt_lib_copy_history_t *d = (dt_lib_copy_history_t *)malloc(sizeof(dt_lib_copy_history_t));
   self->data = (void *)d;
-  self->widget = gtk_vbox_new(TRUE, 5);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
   dt_gui_hist_dialog_init(&d->dg);
 
-  GtkBox *hbox = GTK_BOX(gtk_hbox_new(TRUE, 5));
+  GtkBox *hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
 
   GtkWidget *copy_parts = gtk_button_new_with_label(_("copy"));
   d->copy_parts_button = copy_parts;
@@ -269,7 +269,7 @@ gui_init (dt_lib_module_t *self)
   gtk_box_pack_start(hbox, delete, TRUE, TRUE, 0);
 
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(hbox), TRUE, TRUE, 0);
-  hbox = GTK_BOX(gtk_hbox_new(TRUE, 5));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
 
   d->paste_parts = GTK_BUTTON(gtk_button_new_with_label(_("paste")));
   g_object_set(G_OBJECT(d->paste_parts), "tooltip-text", _("paste part history stack to\nall selected images (ctrl-shift-v)"), (char *)NULL);
@@ -291,7 +291,7 @@ gui_init (dt_lib_module_t *self)
 
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(hbox), TRUE, TRUE, 0);
 
-  hbox = GTK_BOX(gtk_hbox_new(TRUE, 5));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
   GtkWidget *loadbutton = gtk_button_new_with_label(_("load sidecar file"));
   d->load_button = loadbutton;
   g_object_set(G_OBJECT(loadbutton), "tooltip-text", _("open an XMP sidecar file\nand apply it to selected images"), (char *)NULL);

@@ -530,7 +530,7 @@ void gui_init(struct dt_iop_module_t *self)
 
   g->dragging = 0;
 
-  self->widget = gtk_vbox_new(FALSE, DT_BAUHAUS_SPACE);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE);
   g->area = GTK_DRAWING_AREA(gtk_drawing_area_new());
   // GtkWidget *asp = gtk_aspect_frame_new(NULL, 0.5, 0.5, 1.0, TRUE);
   // gtk_box_pack_start(GTK_BOX(self->widget), asp, TRUE, TRUE, 0);

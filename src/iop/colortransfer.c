@@ -657,7 +657,7 @@ void gui_init(struct dt_iop_module_t *self)
   g->hLab  = dt_colorspaces_create_lab_profile();
   g->xform = cmsCreateTransform(g->hLab, TYPE_Lab_DBL, g->hsRGB, TYPE_RGB_DBL, INTENT_PERCEPTUAL, 0);
 
-  self->widget = GTK_WIDGET(gtk_vbox_new(FALSE, DT_GUI_IOP_MODULE_CONTROL_SPACING));
+  self->widget = GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_GUI_IOP_MODULE_CONTROL_SPACING));
   g_signal_connect (G_OBJECT(self->widget), "expose-event",
                     G_CALLBACK(expose), self);
 
@@ -666,7 +666,7 @@ void gui_init(struct dt_iop_module_t *self)
   gtk_box_pack_start(GTK_BOX(self->widget), g->area, TRUE, TRUE, 0);
   g_signal_connect (G_OBJECT (g->area), "expose-event", G_CALLBACK (cluster_preview_expose), self);
 
-  GtkBox *box = GTK_BOX(gtk_hbox_new(FALSE, 5));
+  GtkBox *box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(box), TRUE, TRUE, 0);
   GtkWidget *button;
   g->spinbutton = GTK_SPIN_BUTTON(gtk_spin_button_new_with_range(1, MAXN, 1));

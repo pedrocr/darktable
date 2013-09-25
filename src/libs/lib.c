@@ -213,7 +213,7 @@ edit_preset (const char *name_in, dt_lib_module_info_t *minfo)
   GtkWidget *alignment = gtk_alignment_new(0.5, 0.5, 1.0, 1.0);
   gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 5, 5, 5, 5);
   gtk_container_add (content_area, alignment);
-  GtkBox *box = GTK_BOX(gtk_vbox_new(FALSE, 5));
+  GtkBox *box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
   gtk_container_add (GTK_CONTAINER(alignment), GTK_WIDGET(box));
 
   dt_lib_presets_edit_dialog_t *g = (dt_lib_presets_edit_dialog_t *)g_malloc0(sizeof(dt_lib_presets_edit_dialog_t));
@@ -796,9 +796,9 @@ dt_lib_gui_get_expander (dt_lib_module_t *module)
 
   int bs = 12;
 
-  GtkWidget *expander = gtk_vbox_new(FALSE, 3);
+  GtkWidget *expander = gtk_box_new(GTK_ORIENTATION_VERTICAL, 3);
   GtkWidget *header_evb = gtk_event_box_new();
-  GtkWidget *header = gtk_hbox_new(FALSE, 0);
+  GtkWidget *header = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   GtkWidget *pluginui_frame = gtk_frame_new(NULL);
   GtkWidget *pluginui = gtk_event_box_new();
 

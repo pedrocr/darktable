@@ -307,7 +307,7 @@ _add_property_button_clicked (GtkWidget *widget, gpointer user_data)
     dt_lib_camera_property_t *prop = NULL;
     if ((prop=_lib_property_add_new (lib, label,property)) != NULL)
     {
-      GtkBox *hbox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+      GtkBox *hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
       gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (prop->values), TRUE, TRUE, 0);
       gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (prop->osd), FALSE, FALSE, 0);
       gtk_box_pack_start (lib->gui.pvbox1, GTK_WIDGET (prop->label), TRUE, TRUE, 0);
@@ -425,7 +425,7 @@ gui_post_expose(dt_lib_module_t *self, cairo_t *cr, int32_t width, int32_t heigh
 void
 gui_init (dt_lib_module_t *self)
 {
-  self->widget = gtk_vbox_new(FALSE, 5);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
   self->data = malloc(sizeof(dt_lib_camera_t));
   memset(self->data,0,sizeof(dt_lib_camera_t));
 
@@ -442,13 +442,13 @@ gui_init (dt_lib_module_t *self)
   lib->data.listener->request_image_filename=_camera_tethered_request_image_filename;
 
   // Setup gui
-  self->widget = gtk_vbox_new(FALSE, 5);
+  self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
   GtkBox *hbox, *vbox1, *vbox2;
 
   // Camera control
   gtk_box_pack_start(GTK_BOX(self->widget), dtgtk_label_new(_("camera control"),DARKTABLE_LABEL_TAB|DARKTABLE_LABEL_ALIGN_RIGHT), TRUE, TRUE, 5);
-  vbox1 = GTK_BOX(gtk_vbox_new(TRUE, 0));
-  vbox2 = GTK_BOX(gtk_vbox_new(TRUE, 0));
+  vbox1 = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0));
+  vbox2 = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0));
 
   lib->gui.label1=gtk_label_new(_("modes"));
   lib->gui.label2=gtk_label_new(_("timer (s)"));
@@ -471,7 +471,7 @@ gui_init (dt_lib_module_t *self)
   lib->gui.tb2=DTGTK_TOGGLEBUTTON(dtgtk_togglebutton_new(dtgtk_cairo_paint_filmstrip,CPF_STYLE_FLAT|CPF_DO_NOT_USE_BORDER));
   lib->gui.tb3=DTGTK_TOGGLEBUTTON(dtgtk_togglebutton_new(dtgtk_cairo_paint_bracket,CPF_STYLE_FLAT|CPF_DO_NOT_USE_BORDER));
 
-  hbox = GTK_BOX(gtk_hbox_new(TRUE, 5));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
   gtk_box_pack_start(hbox, GTK_WIDGET(lib->gui.tb1), TRUE, TRUE, 0);
   gtk_box_pack_start(hbox, GTK_WIDGET(lib->gui.tb2), TRUE, TRUE, 0);
   gtk_box_pack_start(hbox, GTK_WIDGET(lib->gui.tb3), TRUE, TRUE, 0);
@@ -486,7 +486,7 @@ gui_init (dt_lib_module_t *self)
   gtk_box_pack_start(vbox2, GTK_WIDGET(lib->gui.sb3), TRUE, TRUE, 0);
   gtk_box_pack_start(vbox2, GTK_WIDGET(lib->gui.sb4), TRUE, TRUE, 0);
 
-  hbox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
   gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(vbox1), FALSE, FALSE, 5);
   gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(vbox2), TRUE, TRUE, 5);
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(hbox), FALSE, FALSE, 5);
@@ -514,12 +514,12 @@ gui_init (dt_lib_module_t *self)
   // Camera settings
   dt_lib_camera_property_t *prop;
   gtk_box_pack_start(GTK_BOX(self->widget), dtgtk_label_new(_("properties"),DARKTABLE_LABEL_TAB|DARKTABLE_LABEL_ALIGN_RIGHT), TRUE, TRUE, 0);
-  lib->gui.pvbox1 = GTK_BOX(gtk_vbox_new(TRUE, 0));
-  lib->gui.pvbox2 = GTK_BOX(gtk_vbox_new(TRUE, 0));
+  lib->gui.pvbox1 = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0));
+  lib->gui.pvbox2 = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0));
 
   if( (prop=_lib_property_add_new(lib, _("program"),"expprogram"))!=NULL )
   {
-    hbox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->values), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->osd), FALSE, FALSE, 0);
     gtk_box_pack_start(lib->gui.pvbox1, GTK_WIDGET(prop->label), TRUE, TRUE, 0);
@@ -529,7 +529,7 @@ gui_init (dt_lib_module_t *self)
 
   if( (prop=_lib_property_add_new(lib, _("focus mode"),"focusmode"))!=NULL )
   {
-    hbox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->values), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->osd), FALSE, FALSE, 0);
     gtk_box_pack_start(lib->gui.pvbox1, GTK_WIDGET(prop->label), TRUE, TRUE, 0);
@@ -538,7 +538,7 @@ gui_init (dt_lib_module_t *self)
   }
   else if( (prop=_lib_property_add_new(lib, _("focus mode"),"drivemode"))!=NULL )
   {
-    hbox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->values), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->osd), FALSE, FALSE, 0);
     gtk_box_pack_start(lib->gui.pvbox1, GTK_WIDGET(prop->label), TRUE, TRUE, 0);
@@ -548,7 +548,7 @@ gui_init (dt_lib_module_t *self)
 
   if( (prop=_lib_property_add_new(lib, _("aperture"),"f-number"))!=NULL )
   {
-    hbox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->values), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->osd), FALSE, FALSE, 0);
     gtk_box_pack_start(lib->gui.pvbox1, GTK_WIDGET(prop->label), TRUE, TRUE, 0);
@@ -557,7 +557,7 @@ gui_init (dt_lib_module_t *self)
   }
   else if( (prop=_lib_property_add_new(lib, _("aperture"),"aperture"))!=NULL ) // for Canon cameras
   {
-    hbox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->values), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->osd), FALSE, FALSE, 0);
     gtk_box_pack_start(lib->gui.pvbox1, GTK_WIDGET(prop->label), TRUE, TRUE, 0);
@@ -567,7 +567,7 @@ gui_init (dt_lib_module_t *self)
 
   if( (prop=_lib_property_add_new(lib, _("focal length"),"focallength"))!=NULL )
   {
-    hbox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->values), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->osd), FALSE, FALSE, 0);
     gtk_box_pack_start(lib->gui.pvbox1, GTK_WIDGET(prop->label), TRUE, TRUE, 0);
@@ -577,7 +577,7 @@ gui_init (dt_lib_module_t *self)
 
   if( (prop=_lib_property_add_new(lib, _("shutterspeed2"),"shutterspeed2"))!=NULL )
   {
-    hbox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->values), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->osd), FALSE, FALSE, 0);
     gtk_box_pack_start(lib->gui.pvbox1, GTK_WIDGET(prop->label), TRUE, TRUE, 0);
@@ -586,7 +586,7 @@ gui_init (dt_lib_module_t *self)
   }
   else if( (prop=_lib_property_add_new(lib, _("shutterspeed"),"shutterspeed"))!=NULL ) // Canon, again
   {
-    hbox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->values), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->osd), FALSE, FALSE, 0);
     gtk_box_pack_start(lib->gui.pvbox1, GTK_WIDGET(prop->label), TRUE, TRUE, 0);
@@ -596,7 +596,7 @@ gui_init (dt_lib_module_t *self)
 
   if( (prop=_lib_property_add_new(lib, _("ISO"),"iso"))!=NULL)
   {
-    hbox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->values), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->osd), FALSE, FALSE, 0);
     gtk_box_pack_start(lib->gui.pvbox1, GTK_WIDGET(prop->label), TRUE, TRUE, 0);
@@ -606,7 +606,7 @@ gui_init (dt_lib_module_t *self)
 
   if( (prop=_lib_property_add_new(lib, _("WB"),"whitebalance"))!=NULL)
   {
-    hbox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->values), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->osd), FALSE, FALSE, 0);
     gtk_box_pack_start(lib->gui.pvbox1, GTK_WIDGET(prop->label), TRUE, TRUE, 0);
@@ -616,7 +616,7 @@ gui_init (dt_lib_module_t *self)
 
   if( (prop=_lib_property_add_new(lib, _("quality"),"imagequality"))!=NULL)
   {
-    hbox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->values), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->osd), FALSE, FALSE, 0);
     gtk_box_pack_start(lib->gui.pvbox1, GTK_WIDGET(prop->label), TRUE, TRUE, 0);
@@ -626,7 +626,7 @@ gui_init (dt_lib_module_t *self)
 
   if( (prop=_lib_property_add_new(lib, _("size"),"imagesize"))!=NULL)
   {
-    hbox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->values), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(prop->osd), FALSE, FALSE, 0);
     gtk_box_pack_start(lib->gui.pvbox1, GTK_WIDGET(prop->label), TRUE, TRUE, 0);
@@ -651,7 +651,7 @@ gui_init (dt_lib_module_t *self)
 
         if ((prop = _lib_property_add_new (lib, entry->key,entry->value )) != NULL)
         {
-          hbox = GTK_BOX (gtk_hbox_new(FALSE, 0));
+          hbox = GTK_BOX (gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
           gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (prop->values), TRUE, TRUE, 0);
           gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (prop->osd), FALSE, FALSE, 0);
           gtk_box_pack_start (lib->gui.pvbox1, GTK_WIDGET (prop->label), TRUE, TRUE, 0);
@@ -664,7 +664,7 @@ gui_init (dt_lib_module_t *self)
   }
 
 
-  hbox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
   gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(lib->gui.pvbox1), FALSE, FALSE, 5);
   gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(lib->gui.pvbox2), TRUE, TRUE, 5);
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(hbox), FALSE, FALSE, 5);
@@ -674,15 +674,15 @@ gui_init (dt_lib_module_t *self)
 
   // user specified properties
   gtk_box_pack_start (GTK_BOX (self->widget), dtgtk_label_new (_("additional properties"),DARKTABLE_LABEL_TAB|DARKTABLE_LABEL_ALIGN_RIGHT), TRUE, TRUE, 5);
-  vbox1 = GTK_BOX (gtk_vbox_new (TRUE, 0));
-  vbox2 = GTK_BOX (gtk_vbox_new (TRUE, 0));
+  vbox1 = GTK_BOX (gtk_box_new(GTK_ORIENTATION_VERTICAL, 0));
+  vbox2 = GTK_BOX (gtk_box_new(GTK_ORIENTATION_VERTICAL, 0));
 
   gtk_box_pack_start (vbox1, GTK_WIDGET ( gtk_label_new (_("label"))), TRUE, TRUE, 0);
   lib->gui.plabel = gtk_entry_new ();
   dt_gui_key_accel_block_on_focus_connect (lib->gui.plabel);
   gtk_box_pack_start (vbox2, GTK_WIDGET ( lib->gui.plabel ), TRUE, TRUE, 0);
 
-  hbox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+  hbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
   gtk_box_pack_start (vbox1, GTK_WIDGET ( gtk_label_new (_("property"))), TRUE, TRUE, 0);
   GtkWidget *widget = gtk_button_new_with_label("O");
   g_signal_connect (G_OBJECT (widget), "clicked", G_CALLBACK (_show_property_popupmenu_clicked), lib);
@@ -692,7 +692,7 @@ gui_init (dt_lib_module_t *self)
   gtk_box_pack_start (hbox, GTK_WIDGET ( widget ), FALSE, FALSE, 0);
   gtk_box_pack_start (vbox2, GTK_WIDGET ( hbox ), TRUE, TRUE, 0);
 
-  hbox = GTK_BOX (gtk_hbox_new(FALSE, 0));
+  hbox = GTK_BOX (gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
   gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (vbox1), FALSE, FALSE, 5);
   gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (vbox2), TRUE, TRUE, 5);
   widget = gtk_button_new_with_label (_("add user property"));
