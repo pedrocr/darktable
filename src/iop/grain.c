@@ -47,7 +47,7 @@ DT_MODULE(1)
 
 typedef struct dt_iop_grain_gui_data_t
 {
-  GtkVBox   *vbox;
+  GtkBox   *vbox;
   GtkWidget  *label1,*label2,*label3;	      // channel, scale, strength
   GtkWidget *scale1,*scale2;       // scale, strength
 }

@@ -70,7 +70,7 @@ Gcurve;
 typedef struct dt_iop_densitycurve_gui_data_t
 {
   dt_draw_curve_t *minmax_curve;        // curve for gui to draw
-  GtkHBox *hbox;
+  GtkBox *hbox;
   GtkDrawingArea *area;
   GtkLabel *label;
   GtkComboBoxText *spline_type;

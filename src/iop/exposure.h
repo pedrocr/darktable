@@ -31,7 +31,7 @@ dt_iop_exposure_params_t;
 
 typedef struct dt_iop_exposure_gui_data_t
 {
-  GtkVBox *vbox1, *vbox2;
+  GtkBox *vbox1, *vbox2;
   GtkCheckButton *autoexp;
   GtkWidget* black;
   GtkWidget* exposure;

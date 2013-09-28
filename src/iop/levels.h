@@ -41,7 +41,7 @@ dt_iop_levels_pick_t;
 
 typedef struct dt_iop_levels_gui_data_t
 {
-  GtkHBox *hbox;
+  GtkBox *hbox;
   GtkDrawingArea *area;
   GtkLabel *label;
   double mouse_x, mouse_y;

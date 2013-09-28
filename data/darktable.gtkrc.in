@@ -272,7 +272,7 @@ widget "*.plugins_vbox.GtkEventBox" style "clearlooks-brightbg"
 widget "*.plugins_vbox_left.GtkEventBox" style "clearlooks-brightbg"
 widget "*.plugins_vbox_left.*.GtkTable.*" style "clearlooks-plugin"
 # widget "*.left_scrolled.GtkEventBox" style "clearlooks-brightbg"
-#widget "*.GtkEventBox.GtkVBox.GtkHBox.GtkButton" style "clearlooks-vbrightbg"
+#widget "*.GtkEventBox.GtkBox.GtkBox.GtkButton" style "clearlooks-vbrightbg"
 
 widget "*.header_label" style "clearlooks-header"
 widget "*.panel_label" style "clearlooks-header-panel-label"

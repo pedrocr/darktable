@@ -48,7 +48,7 @@ dt_iop_rlce_params_t;
 
 typedef struct dt_iop_rlce_gui_data_t
 {
-  GtkVBox   *vbox1,  *vbox2;
+  GtkBox   *vbox1,  *vbox2;
   GtkWidget  *label1,*label2;
   GtkDarktableSlider *scale1,*scale2;       // radie pixels, slope
 }
@@ -334,8 +334,8 @@ void gui_init(struct dt_iop_module_t *self)
   dt_iop_rlce_params_t *p = (dt_iop_rlce_params_t *)self->params;
 
   self->widget = GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
-  g->vbox1 = GTK_VBOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_GUI_IOP_MODULE_CONTROL_SPACING));
-  g->vbox2 = GTK_VBOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_GUI_IOP_MODULE_CONTROL_SPACING));
+  g->vbox1 = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_GUI_IOP_MODULE_CONTROL_SPACING));
+  g->vbox2 = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_GUI_IOP_MODULE_CONTROL_SPACING));
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(g->vbox1), FALSE, FALSE, 5);
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(g->vbox2), TRUE, TRUE, 5);
 

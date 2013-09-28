@@ -327,10 +327,10 @@ typedef struct dt_iop_gui_blend_data_t
   GList *masks_invert;
   GList *blend_modes_all;
   GtkWidget *iopw;
-  GtkVBox *top_box;
-  GtkVBox *bottom_box;
-  GtkVBox *blendif_box;
-  GtkVBox *masks_box;
+  GtkBox *top_box;
+  GtkBox *bottom_box;
+  GtkBox *blendif_box;
+  GtkBox *masks_box;
   GtkDarktableGradientSlider *upper_slider;
   GtkDarktableGradientSlider *lower_slider;
   GtkLabel *upper_label[8];
@@ -391,7 +391,7 @@ gboolean dt_develop_blend_params_is_all_zero (const void *params, size_t length)
 int dt_develop_blend_legacy_params (dt_iop_module_t *module, const void *const old_params, const int old_version, void *new_params, const int new_version, const int lenght);
 
 /** gui related stuff */
-void dt_iop_gui_init_blendif(GtkVBox *blendw, dt_iop_module_t *module);
+void dt_iop_gui_init_blendif(GtkBox *blendw, dt_iop_module_t *module);
 void dt_iop_gui_init_blending(GtkWidget *iopw, dt_iop_module_t *module);
 void dt_iop_gui_update_blending(dt_iop_module_t *module);
 void dt_iop_gui_update_blendif(dt_iop_module_t *module);
