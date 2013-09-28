@@ -24,7 +24,7 @@ static void _icon_init (GtkDarktableIcon *icon);
 static void _icon_size_request (GtkWidget *widget, GtkRequisition *requisition);
 static void _icon_get_preferred_width (GtkWidget *widget, gint *minimal_width, gint *natural_width);
 static void _icon_get_preferred_height (GtkWidget *widget, gint *minimal_height, gint *natural_height);
-static gboolean _icon_expose (GtkWidget *widget, GdkEventExpose *event);
+static gboolean _icon_draw (GtkWidget *widget, cairo_t *cr);
 
 
 static void
@@ -33,7 +33,7 @@ _icon_class_init (GtkDarktableIconClass *klass)
   GtkWidgetClass *widget_class=(GtkWidgetClass *) klass;
   widget_class->get_preferred_width = _icon_get_preferred_width;
   widget_class->get_preferred_height = _icon_get_preferred_height;
-  widget_class->expose_event = _icon_expose;
+  widget_class->draw = _icon_draw;
 }
 
 static void
@@ -76,11 +76,11 @@ _icon_get_preferred_height (GtkWidget *widget,
 }
 
 static gboolean
-_icon_expose (GtkWidget *widget, GdkEventExpose *event)
+_icon_draw (GtkWidget *widget, cairo_t *cr)
 {
   g_return_val_if_fail (widget != NULL, FALSE);
   g_return_val_if_fail (DTGTK_IS_ICON(widget), FALSE);
-  g_return_val_if_fail (event != NULL, FALSE);
+
   GtkStyle *style=gtk_widget_get_style(widget);
   int state = gtk_widget_get_state(widget);
   int border = 0;
@@ -90,9 +90,6 @@ _icon_expose (GtkWidget *widget, GdkEventExpose *event)
 
 
   /* begin cairo drawing */
-  cairo_t *cr;
-  cr = gdk_cairo_create (gtk_widget_get_window(widget));
-
   GtkAllocation allocation;
   gtk_widget_get_allocation(widget, &allocation);
   int x = allocation.x;
@@ -118,8 +115,6 @@ _icon_expose (GtkWidget *widget, GdkEventExpose *event)
   /* draw icon */
   if (DTGTK_ICON(widget)->icon)
     DTGTK_ICON(widget)->icon(cr, x+border, y+border, width-(border*2), height-(border*2), flags);
-
-  cairo_destroy (cr);
 
   return FALSE;
 }

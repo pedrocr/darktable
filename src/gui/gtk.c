@@ -323,7 +323,7 @@ dt_gui_key_accel_block_on_focus_connect(GtkWidget *w)
 }
 
 static gboolean
-expose_borders (GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
+draw_borders (GtkWidget *widget, cairo_t *crf, gpointer user_data)
 {
   // draw arrows on borders
   if(!dt_control_running()) return TRUE;
@@ -451,21 +451,19 @@ expose_borders (GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
   cairo_fill(cr);
 
   cairo_destroy(cr);
-  cairo_t *cr_pixmap = gdk_cairo_create(gtk_widget_get_window(widget));
-  cairo_set_source_surface (cr_pixmap, cst, 0, 0);
-  cairo_paint(cr_pixmap);
-  cairo_destroy(cr_pixmap);
+  cairo_set_source_surface (crf, cst, 0, 0);
+  cairo_paint(crf);
   cairo_surface_destroy(cst);
   return TRUE;
 }
 
 static gboolean
-expose (GtkWidget *da, GdkEventExpose *event, gpointer user_data)
+draw (GtkWidget *da, cairo_t *crf, gpointer user_data)
 {
   dt_control_expose(NULL);
   if(darktable.gui->surface) {
     cairo_t *cr = gdk_cairo_create (gtk_widget_get_window(da));
-    cairo_set_source_surface (cr, darktable.gui->surface, event->area.x, event->area.y);
+    cairo_set_source_surface (cr, darktable.gui->surface, 0, 0);
     cairo_paint (cr);
     cairo_destroy (cr);
   }
@@ -510,13 +508,13 @@ void dt_gui_gtk_quit()
 
   GtkWidget *widget;
   widget = darktable.gui->widgets.left_border;
-  g_signal_handlers_block_by_func (widget, expose_borders, (gpointer)0);
+  g_signal_handlers_block_by_func (widget, draw_borders, (gpointer)0);
   widget = darktable.gui->widgets.right_border;
-  g_signal_handlers_block_by_func (widget, expose_borders, (gpointer)1);
+  g_signal_handlers_block_by_func (widget, draw_borders, (gpointer)1);
   widget = darktable.gui->widgets.top_border;
-  g_signal_handlers_block_by_func (widget, expose_borders, (gpointer)2);
+  g_signal_handlers_block_by_func (widget, draw_borders, (gpointer)2);
   widget = darktable.gui->widgets.bottom_border;
-  g_signal_handlers_block_by_func (widget, expose_borders, (gpointer)3);
+  g_signal_handlers_block_by_func (widget, draw_borders, (gpointer)3);
 
 }
 
@@ -834,8 +832,8 @@ dt_gui_gtk_init(dt_gui_gtk_t *gui, int argc, char *argv[])
                     G_CALLBACK (key_pressed), NULL);
   g_signal_connect (G_OBJECT (widget), "configure-event",
                     G_CALLBACK (configure), NULL);
-  g_signal_connect (G_OBJECT (widget), "expose-event",
-                    G_CALLBACK (expose), NULL);
+  g_signal_connect (G_OBJECT (widget), "draw",
+                    G_CALLBACK (draw), NULL);
   g_signal_connect (G_OBJECT (widget), "motion-notify-event",
                     G_CALLBACK (mouse_moved), NULL);
   g_signal_connect (G_OBJECT (widget), "leave-notify-event",
@@ -852,22 +850,22 @@ dt_gui_gtk_init(dt_gui_gtk_t *gui, int argc, char *argv[])
   //leave-notify-event
 
   widget = darktable.gui->widgets.left_border;
-  g_signal_connect (G_OBJECT (widget), "expose-event", G_CALLBACK (expose_borders), (gpointer)0);
+  g_signal_connect (G_OBJECT (widget), "draw", G_CALLBACK (draw_borders), (gpointer)0);
   g_signal_connect (G_OBJECT (widget), "button-press-event", G_CALLBACK (borders_button_pressed), darktable.gui->ui);
   g_signal_connect (G_OBJECT (widget), "scroll-event", G_CALLBACK (borders_scrolled), (gpointer)0);
   g_object_set_data(G_OBJECT (widget), "border", (gpointer)0);
   widget = darktable.gui->widgets.right_border;
-  g_signal_connect (G_OBJECT (widget), "expose-event", G_CALLBACK (expose_borders), (gpointer)1);
+  g_signal_connect (G_OBJECT (widget), "draw", G_CALLBACK (draw_borders), (gpointer)1);
   g_signal_connect (G_OBJECT (widget), "button-press-event", G_CALLBACK (borders_button_pressed), darktable.gui->ui);
   g_signal_connect (G_OBJECT (widget), "scroll-event", G_CALLBACK (borders_scrolled), (gpointer)1);
   g_object_set_data(G_OBJECT (widget), "border", (gpointer)1);
   widget = darktable.gui->widgets.top_border;
-  g_signal_connect (G_OBJECT (widget), "expose-event", G_CALLBACK (expose_borders), (gpointer)2);
+  g_signal_connect (G_OBJECT (widget), "draw", G_CALLBACK (draw_borders), (gpointer)2);
   g_signal_connect (G_OBJECT (widget), "button-press-event", G_CALLBACK (borders_button_pressed), darktable.gui->ui);
   g_signal_connect (G_OBJECT (widget), "scroll-event", G_CALLBACK (borders_scrolled), (gpointer)2);
   g_object_set_data(G_OBJECT (widget), "border", (gpointer)2);
   widget = darktable.gui->widgets.bottom_border;
-  g_signal_connect (G_OBJECT (widget), "expose-event", G_CALLBACK (expose_borders), (gpointer)3);
+  g_signal_connect (G_OBJECT (widget), "draw", G_CALLBACK (draw_borders), (gpointer)3);
   g_signal_connect (G_OBJECT (widget), "button-press-event", G_CALLBACK (borders_button_pressed), darktable.gui->ui);
   g_signal_connect (G_OBJECT (widget), "scroll-event", G_CALLBACK (borders_scrolled), (gpointer)3);
   g_object_set_data(G_OBJECT (widget), "border", (gpointer)3);
@@ -1022,7 +1020,7 @@ void dt_gui_gtk_run(dt_gui_gtk_t *gui)
   GtkAllocation allocation;
   gtk_widget_get_allocation(widget, &allocation);
   darktable.gui->surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, allocation.width, allocation.height);
-  //need to pre-configure views to avoid crash caused by expose-event coming before configure-event
+  //need to pre-configure views to avoid crash caused by draw coming before configure-event
   darktable.control->tabborder = 8;
   int tb = darktable.control->tabborder;
   dt_view_manager_configure(darktable.view_manager, allocation.width - 2*tb, allocation.height - 2*tb);

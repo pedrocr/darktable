@@ -26,7 +26,7 @@ static void _label_size_request(GtkWidget *widget, GtkRequisition *requisition);
 //static void _label_realize(GtkWidget *widget);
 static void _label_get_preferred_width (GtkWidget *widget, gint *minimal_width, gint *natural_width);
 static void _label_get_preferred_height (GtkWidget *widget, gint *minimal_height, gint *natural_height);
-static gboolean _label_expose(GtkWidget *widget, GdkEventExpose *event);
+static gboolean _label_draw(GtkWidget *widget, cairo_t *cr);
 //static void _label_destroy(GtkObject *object);
 
 
@@ -37,10 +37,10 @@ static void _label_class_init (GtkDarktableLabelClass *klass)
   //widget_class->realize = _label_realize;
   widget_class->size_request = _label_size_request;
   //widget_class->size_allocate = _label_size_allocate;
-  widget_class->expose_event = _label_expose;
   //object_class->destroy = _label_destroy;
   widget_class->get_preferred_width = _label_get_preferred_width;
   widget_class->get_preferred_height = _label_get_preferred_height;
+  widget_class->draw = _label_draw;
 }
 
 static void _label_init(GtkDarktableLabel *label)
@@ -109,11 +109,11 @@ _label_get_preferred_height (GtkWidget *widget,
   *minimal_height = *natural_height = requisition.height;
 }
 
-static gboolean _label_expose(GtkWidget *widget, GdkEventExpose *event)
+static gboolean _label_draw(GtkWidget *widget, cairo_t *cr)
 {
   g_return_val_if_fail(widget != NULL, FALSE);
   g_return_val_if_fail(DTGTK_IS_LABEL(widget), FALSE);
-  g_return_val_if_fail(event != NULL, FALSE);
+
   GtkStyle *style=gtk_rc_get_style_by_paths(gtk_settings_get_default(), NULL,"GtkButton", GTK_TYPE_BUTTON);
   if(!style) style = gtk_rc_get_style(widget);
   // uninitialized?
@@ -139,10 +139,6 @@ static gboolean _label_expose(GtkWidget *widget, GdkEventExpose *event)
 
 
   // Begin cairo drawing
-
-  cairo_t *cr;
-  cr = gdk_cairo_create(gtk_widget_get_window(widget));
-
   cairo_set_source_rgba(cr,
                         /* style->fg[state].red/65535.0,
                          style->fg[state].green/65535.0,
@@ -201,7 +197,6 @@ static gboolean _label_expose(GtkWidget *widget, GdkEventExpose *event)
     }
   }
   cairo_set_antialias(cr,CAIRO_ANTIALIAS_DEFAULT);
-  cairo_destroy(cr);
 
   // draw text
   int lx=x+4, ly=y+((height/2.0)-(ph/2.0));

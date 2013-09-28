@@ -33,7 +33,7 @@ G_DEFINE_TYPE (DtBauhausWidget, dt_bh, GTK_TYPE_DRAWING_AREA)
 
 // fwd declare
 static gboolean
-dt_bauhaus_popup_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data);
+dt_bauhaus_popup_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data);
 static gboolean
 dt_bauhaus_popup_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data);
 static void
@@ -524,7 +524,7 @@ dt_bh_class_init(DtBauhausWidgetClass *class)
   // TODO: could init callbacks once per class for more efficiency:
   // GtkWidgetClass *widget_class;
   // widget_class = GTK_WIDGET_CLASS (class);
-  // widget_class->expose_event = dt_bauhaus_expose;
+  // widget_class->draw = dt_bauhaus_draw;
 }
 
 static int
@@ -663,8 +663,8 @@ dt_bauhaus_init()
                         GDK_LEAVE_NOTIFY_MASK);
 
   g_signal_connect (G_OBJECT (darktable.bauhaus->popup_window), "show", G_CALLBACK(window_show), (gpointer)NULL);
-  g_signal_connect (G_OBJECT (darktable.bauhaus->popup_area), "expose-event",
-                    G_CALLBACK (dt_bauhaus_popup_expose), (gpointer)NULL);
+  g_signal_connect (G_OBJECT (darktable.bauhaus->popup_area), "draw",
+                    G_CALLBACK (dt_bauhaus_popup_draw), (gpointer)NULL);
   g_signal_connect (G_OBJECT (darktable.bauhaus->popup_area), "motion-notify-event",
                     G_CALLBACK (dt_bauhaus_popup_motion_notify), (gpointer)NULL);
   g_signal_connect (G_OBJECT (darktable.bauhaus->popup_area), "leave-notify-event",
@@ -708,7 +708,7 @@ dt_bauhaus_combobox_scroll(GtkWidget *widget, GdkEventScroll *event, gpointer us
 // static gboolean
 // dt_bauhaus_button_release(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 static gboolean
-dt_bauhaus_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data);
+dt_bauhaus_draw(GtkWidget *widget, cairo_t *crf, gpointer user_data);
 
 
 // end static init/cleanup
@@ -737,8 +737,8 @@ dt_bauhaus_widget_init(dt_bauhaus_widget_t* w, dt_iop_module_t *self)
                         GDK_BUTTON_RELEASE_MASK |
                         GDK_LEAVE_NOTIFY_MASK);
 
-  g_signal_connect (G_OBJECT (w), "expose-event",
-                    G_CALLBACK (dt_bauhaus_expose), NULL);
+  g_signal_connect (G_OBJECT (w), "draw",
+                    G_CALLBACK (dt_bauhaus_draw), NULL);
 
   // for combobox, where mouse-release triggers a selection, we need to catch this
   // event where the mouse-press occurred, which will be this widget. we just pass
@@ -1338,7 +1338,7 @@ dt_bauhaus_widget_accept(dt_bauhaus_widget_t *w)
 }
 
 static gboolean
-dt_bauhaus_popup_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
+dt_bauhaus_popup_draw(GtkWidget *widget, cairo_t *crf, gpointer user_data)
 {
   GtkAllocation allocation;
   gtk_widget_get_allocation(widget, &allocation);
@@ -1513,17 +1513,15 @@ dt_bauhaus_popup_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_
   }
 
   cairo_destroy(cr);
-  cairo_t *cr_pixmap = gdk_cairo_create(gtk_widget_get_window(widget));
-  cairo_set_source_surface (cr_pixmap, cst, 0, 0);
-  cairo_paint(cr_pixmap);
-  cairo_destroy(cr_pixmap);
+  cairo_set_source_surface (crf, cst, 0, 0);
+  cairo_paint(crf);
   cairo_surface_destroy(cst);
 
   return TRUE;
 }
 
 static gboolean
-dt_bauhaus_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
+dt_bauhaus_draw(GtkWidget *widget, cairo_t *crf, gpointer user_data)
 {
   GtkAllocation allocation;
   gtk_widget_get_allocation(widget, &allocation);
@@ -1583,10 +1581,8 @@ dt_bauhaus_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
   cairo_restore(cr);
 
   cairo_destroy(cr);
-  cairo_t *cr_pixmap = gdk_cairo_create(gtk_widget_get_window(widget));
-  cairo_set_source_surface (cr_pixmap, cst, 0, 0);
-  cairo_paint(cr_pixmap);
-  cairo_destroy(cr_pixmap);
+  cairo_set_source_surface (crf, cst, 0, 0);
+  cairo_paint(crf);
   cairo_surface_destroy(cst);
 
   return TRUE;

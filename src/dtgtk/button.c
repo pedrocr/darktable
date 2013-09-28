@@ -24,15 +24,16 @@ static void _button_init (GtkDarktableButton *button);
 static void _button_size_request (GtkWidget *widget, GtkRequisition *requisition);
 static void _button_get_preferred_width (GtkWidget *widget, gint *minimal_width, gint *natural_width);
 static void _button_get_preferred_height (GtkWidget *widget, gint *minimal_height, gint *natural_height);
-static gboolean _button_expose (GtkWidget *widget, GdkEventExpose *event);
+static gboolean _button_draw (GtkWidget *widget, cairo_t *cr);
 
 static void
 _button_class_init (GtkDarktableButtonClass *klass)
 {
   GtkWidgetClass *widget_class=(GtkWidgetClass *) klass;
+
   widget_class->get_preferred_width = _button_get_preferred_width;
   widget_class->get_preferred_height = _button_get_preferred_height;
-  widget_class->expose_event = _button_expose;
+  widget_class->draw = _button_draw;
 }
 
 static void
@@ -75,11 +76,11 @@ _button_get_preferred_height (GtkWidget *widget,
 }
 
 static gboolean
-_button_expose (GtkWidget *widget, GdkEventExpose *event)
+_button_draw (GtkWidget *widget, cairo_t *cr)
 {
   g_return_val_if_fail (widget != NULL, FALSE);
   g_return_val_if_fail (DTGTK_IS_BUTTON(widget), FALSE);
-  g_return_val_if_fail (event != NULL, FALSE);
+
   GtkStyle *style=gtk_widget_get_style(widget);
   int state = gtk_widget_get_state(widget);
 
@@ -109,9 +110,6 @@ _button_expose (GtkWidget *widget, GdkEventExpose *event)
   }
 
   /* begin cairo drawing */
-  cairo_t *cr;
-  cr = gdk_cairo_create (gtk_widget_get_window(widget));
-
   GtkAllocation allocation;
   gtk_widget_get_allocation(widget, &allocation);
   int x = allocation.x;
@@ -158,7 +156,6 @@ _button_expose (GtkWidget *widget, GdkEventExpose *event)
     else
       DTGTK_BUTTON (widget)->icon (cr,x+border,y+border,width-(border*2),height-(border*2),flags);
   }
-  cairo_destroy (cr);
 
   /* draw label */
   if (text)

@@ -658,13 +658,13 @@ void gui_init(struct dt_iop_module_t *self)
   g->xform = cmsCreateTransform(g->hLab, TYPE_Lab_DBL, g->hsRGB, TYPE_RGB_DBL, INTENT_PERCEPTUAL, 0);
 
   self->widget = GTK_WIDGET(gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_GUI_IOP_MODULE_CONTROL_SPACING));
-  g_signal_connect (G_OBJECT(self->widget), "expose-event",
+  g_signal_connect (G_OBJECT(self->widget), "draw",
                     G_CALLBACK(expose), self);
 
   g->area = gtk_drawing_area_new();
   gtk_widget_set_size_request(GTK_WIDGET(g->area), 300, 100);
   gtk_box_pack_start(GTK_BOX(self->widget), g->area, TRUE, TRUE, 0);
-  g_signal_connect (G_OBJECT (g->area), "expose-event", G_CALLBACK (cluster_preview_expose), self);
+  g_signal_connect (G_OBJECT (g->area), "draw", G_CALLBACK (cluster_preview_expose), self);
 
   GtkBox *box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(box), TRUE, TRUE, 0);

@@ -1689,7 +1689,7 @@ static void autoscale_pressed(GtkWidget *button, gpointer user_data)
 
 
 static gboolean
-expose (GtkWidget *widget, GdkEventExpose *event, dt_iop_module_t *self)
+draw (GtkWidget *widget, cairo_t *cr, dt_iop_module_t *self)
 {
   dt_iop_lensfun_gui_data_t *g = (dt_iop_lensfun_gui_data_t *)self->gui_data;
   if(darktable.gui->reset) return FALSE;
@@ -1789,7 +1789,7 @@ void gui_init(struct dt_iop_module_t *self)
 
   self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE);
 
-  g_signal_connect(G_OBJECT(self->widget), "expose-event", G_CALLBACK(expose), self);
+  g_signal_connect(G_OBJECT(self->widget), "draw", G_CALLBACK(draw), self);
 
   // camera selector
   GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);

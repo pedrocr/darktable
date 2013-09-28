@@ -38,7 +38,7 @@ dt_lib_navigation_t;
 
 
 /* expose function for navigation module */
-static gboolean _lib_navigation_expose_callback(GtkWidget *widget, GdkEventExpose *event, gpointer user_data);
+static gboolean _lib_navigation_draw_callback(GtkWidget *widget, cairo_t *crf, gpointer user_data);
 /* motion notify callback handler*/
 static gboolean _lib_navigation_motion_notify_callback(GtkWidget *widget, GdkEventMotion *event, gpointer user_data);
 /* button press callback */
@@ -103,8 +103,8 @@ void gui_init(dt_lib_module_t *self)
   /* connect callbacks */
   gtk_widget_set_double_buffered(self->widget, FALSE);
   gtk_widget_set_app_paintable(self->widget, TRUE);
-  g_signal_connect (G_OBJECT (self->widget), "expose-event",
-                    G_CALLBACK (_lib_navigation_expose_callback), self);
+  g_signal_connect (G_OBJECT (self->widget), "draw",
+                    G_CALLBACK (_lib_navigation_draw_callback), self);
   g_signal_connect (G_OBJECT (self->widget), "button-press-event",
                     G_CALLBACK (_lib_navigation_button_press_callback), self);
   g_signal_connect (G_OBJECT (self->widget), "button-release-event",
@@ -134,7 +134,7 @@ void gui_cleanup(dt_lib_module_t *self)
 
 
 
-static gboolean _lib_navigation_expose_callback(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
+static gboolean _lib_navigation_draw_callback(GtkWidget *widget, cairo_t *crf, gpointer user_data)
 {
   dt_lib_module_t *self = (dt_lib_module_t *)user_data;
   dt_lib_navigation_t *d = (dt_lib_navigation_t *)self->data;
@@ -299,10 +299,8 @@ static gboolean _lib_navigation_expose_callback(GtkWidget *widget, GdkEventExpos
 
   /* blit memsurface into widget */
   cairo_destroy(cr);
-  cairo_t *cr_pixmap = gdk_cairo_create(gtk_widget_get_window(widget));
-  cairo_set_source_surface (cr_pixmap, cst, 0, 0);
-  cairo_paint(cr_pixmap);
-  cairo_destroy(cr_pixmap);
+  cairo_set_source_surface (crf, cst, 0, 0);
+  cairo_paint(crf);
   cairo_surface_destroy(cst);
 
   return TRUE;

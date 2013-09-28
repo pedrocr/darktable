@@ -276,7 +276,7 @@ void gui_update    (dt_iop_module_t *self)
 }
 
 static gboolean
-expose (GtkWidget *widget, GdkEventExpose *event, dt_iop_module_t *self)
+draw (GtkWidget *widget, cairo_t *crf, dt_iop_module_t *self)
 {
   dt_iop_hotpixels_gui_data_t *g = (dt_iop_hotpixels_gui_data_t *)self->gui_data;
   if(darktable.gui->reset) return FALSE;
@@ -302,7 +302,7 @@ void gui_init     (dt_iop_module_t *self)
   g->pixels_fixed = -1;
 
   self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE);
-  g_signal_connect(G_OBJECT(self->widget), "expose-event", G_CALLBACK(expose), self);
+  g_signal_connect(G_OBJECT(self->widget), "draw", G_CALLBACK(draw), self);
 
   /* threshold */
   g->threshold = dt_bauhaus_slider_new_with_range(self, 0.0, 1.0, 0.005, p->threshold, 4);

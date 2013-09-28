@@ -357,7 +357,7 @@ black_callback (GtkWidget* slider, gpointer user_data)
 }
 
 static gboolean
-expose (GtkWidget *widget, GdkEventExpose *event, dt_iop_module_t *self)
+draw (GtkWidget *widget, cairo_t *cr, dt_iop_module_t *self)
 {
   if(darktable.gui->reset) return FALSE;
   if(self->request_color_pick <= 0) return FALSE;
@@ -432,8 +432,8 @@ void gui_init(struct dt_iop_module_t *self)
                     G_CALLBACK (autoexpp_callback), self);
   g_signal_connect (G_OBJECT (g->autoexp), "toggled",
                     G_CALLBACK (autoexp_callback), self);
-  g_signal_connect (G_OBJECT(self->widget), "expose-event",
-                    G_CALLBACK(expose), self);
+  g_signal_connect (G_OBJECT(self->widget), "draw",
+                    G_CALLBACK(draw), self);
 }
 
 void gui_cleanup(struct dt_iop_module_t *self)

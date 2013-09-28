@@ -888,7 +888,7 @@ reload_defaults(dt_iop_module_t *module)
 
 
 static gboolean
-cluster_preview_expose (GtkWidget *widget, GdkEventExpose *event, dt_iop_module_t *self)
+cluster_preview_draw (GtkWidget *widget, cairo_t *crf, dt_iop_module_t *self)
 {
   dt_iop_colormapping_params_t *p = (dt_iop_colormapping_params_t *)self->params;
   dt_iop_colormapping_gui_data_t *g = (dt_iop_colormapping_gui_data_t *)self->gui_data;
@@ -945,10 +945,8 @@ cluster_preview_expose (GtkWidget *widget, GdkEventExpose *event, dt_iop_module_
   }
 
   cairo_destroy(cr);
-  cairo_t *cr_pixmap = gdk_cairo_create(gtk_widget_get_window(widget));
-  cairo_set_source_surface (cr_pixmap, cst, 0, 0);
-  cairo_paint(cr_pixmap);
-  cairo_destroy(cr_pixmap);
+  cairo_set_source_surface (crf, cst, 0, 0);
+  cairo_paint(crf);
   cairo_surface_destroy(cst);
   return TRUE;
 }
@@ -1061,7 +1059,7 @@ gui_init(struct dt_iop_module_t *self)
   g->source_area = gtk_drawing_area_new();
   gtk_widget_set_size_request(g->source_area, 300, 100);
   gtk_box_pack_start(GTK_BOX(self->widget), g->source_area, TRUE, TRUE, 0);
-  g_signal_connect (G_OBJECT (g->source_area), "expose-event", G_CALLBACK (cluster_preview_expose), self);
+  g_signal_connect (G_OBJECT (g->source_area), "draw", G_CALLBACK (cluster_preview_draw), self);
 
   GtkHBox *hbox2 = GTK_HBOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
   GtkWidget *target = gtk_label_new(_("target clusters:"));
@@ -1071,7 +1069,7 @@ gui_init(struct dt_iop_module_t *self)
   g->target_area = gtk_drawing_area_new();
   gtk_widget_set_size_request(g->target_area, 300, 100);
   gtk_box_pack_start(GTK_BOX(self->widget), g->target_area, TRUE, TRUE, 0);
-  g_signal_connect (G_OBJECT (g->target_area), "expose-event", G_CALLBACK (cluster_preview_expose), self);
+  g_signal_connect (G_OBJECT (g->target_area), "draw", G_CALLBACK (cluster_preview_draw), self);
 
 
   GtkBox *box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));

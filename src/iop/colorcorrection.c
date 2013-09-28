@@ -248,7 +248,7 @@ void cleanup(dt_iop_module_t *module)
 }
 
 static void sat_callback (GtkWidget *slider, gpointer user_data);
-static gboolean dt_iop_colorcorrection_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data);
+static gboolean dt_iop_colorcorrection_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data);
 static gboolean dt_iop_colorcorrection_motion_notify(GtkWidget *widget, GdkEventMotion *event, gpointer user_data);
 static gboolean dt_iop_colorcorrection_button_press(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 static gboolean dt_iop_colorcorrection_leave_notify(GtkWidget *widget, GdkEventCrossing *event, gpointer user_data);
@@ -272,8 +272,8 @@ void gui_init(struct dt_iop_module_t *self)
                 "use mouse wheel to change saturation."), (char *)NULL);
 
   gtk_widget_add_events(GTK_WIDGET(g->area), GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK);
-  g_signal_connect (G_OBJECT (g->area), "expose-event",
-                    G_CALLBACK (dt_iop_colorcorrection_expose), self);
+  g_signal_connect (G_OBJECT (g->area), "draw",
+                    G_CALLBACK (dt_iop_colorcorrection_draw), self);
   g_signal_connect (G_OBJECT (g->area), "button-press-event",
                     G_CALLBACK (dt_iop_colorcorrection_button_press), self);
   g_signal_connect (G_OBJECT (g->area), "motion-notify-event",
@@ -317,7 +317,7 @@ static void sat_callback (GtkWidget *slider, gpointer user_data)
 }
 
 static gboolean
-dt_iop_colorcorrection_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
+dt_iop_colorcorrection_draw(GtkWidget *widget, cairo_t *crf, gpointer user_data)
 {
   dt_iop_module_t *self = (dt_iop_module_t *)user_data;
   dt_iop_colorcorrection_gui_data_t *g = (dt_iop_colorcorrection_gui_data_t *)self->gui_data;
@@ -382,10 +382,8 @@ dt_iop_colorcorrection_expose(GtkWidget *widget, GdkEventExpose *event, gpointer
   cairo_fill(cr);
 
   cairo_destroy(cr);
-  cairo_t *cr_pixmap = gdk_cairo_create(gtk_widget_get_window(widget));
-  cairo_set_source_surface (cr_pixmap, cst, 0, 0);
-  cairo_paint(cr_pixmap);
-  cairo_destroy(cr_pixmap);
+  cairo_set_source_surface (crf, cst, 0, 0);
+  cairo_paint(crf);
   cairo_surface_destroy(cst);
   return TRUE;
 }

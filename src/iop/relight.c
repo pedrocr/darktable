@@ -342,7 +342,7 @@ void cleanup(dt_iop_module_t *module)
 
 
 static gboolean
-expose (GtkWidget *widget, GdkEventExpose *event, dt_iop_module_t *self)
+draw (GtkWidget *widget, cairo_t *cr, dt_iop_module_t *self)
 {
   // capture gui color picked event.
   if(darktable.gui->reset) return FALSE;
@@ -376,7 +376,7 @@ void gui_init(struct dt_iop_module_t *self)
 
   self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE);
 
-  g_signal_connect (G_OBJECT (self->widget), "expose-event", G_CALLBACK (expose), self);
+  g_signal_connect (G_OBJECT (self->widget), "draw", G_CALLBACK (draw), self);
 
   /* exposure */
   g->scale1 = dt_bauhaus_slider_new_with_range(self,-2.0, 2.0,0.05, p->ev, 2);
