@@ -137,7 +137,8 @@ dt_gui_contrast_init ()
   gtk_widget_realize(ev);
   _module_orginal_style = gtk_style_copy (gtk_widget_get_style(ev));
 
-  gtk_widget_destroy(ev);
+//FIXME: or it will segfault
+//  gtk_widget_destroy(ev);
 
   /* apply current contrast value */
   _gui_contrast_apply ();
