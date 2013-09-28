@@ -79,8 +79,6 @@ static gboolean _label_draw(GtkWidget *widget, cairo_t *cr)
 
   GtkStyle *style=gtk_rc_get_style_by_paths(gtk_settings_get_default(), NULL,"GtkButton", GTK_TYPE_BUTTON);
   if(!style) style = gtk_rc_get_style(widget);
-  // uninitialized?
-  if(style->depth == -1) return FALSE;
   int state = gtk_widget_get_state(widget);
 
   GtkAllocation allocation;
@@ -165,7 +163,7 @@ static gboolean _label_draw(GtkWidget *widget, cairo_t *cr)
   int lx=x+4, ly=y+((height/2.0)-(ph/2.0));
   if( DTGTK_LABEL(widget)->flags&DARKTABLE_LABEL_ALIGN_RIGHT ) lx=x+width-pw-6;
   else if( DTGTK_LABEL(widget)->flags&DARKTABLE_LABEL_ALIGN_CENTER ) lx=(width/2.0)-(pw/2.0);
-  gtk_paint_layout(style,gtk_widget_get_window(widget), state,TRUE,&t,widget,"label",lx,ly,layout);
+  gtk_paint_layout(style,gdk_cairo_create(gtk_widget_get_window(widget)),state,TRUE,widget,"label",lx,ly,layout);
 
   return FALSE;
 }

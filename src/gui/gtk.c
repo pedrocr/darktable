@@ -985,7 +985,7 @@ dt_gui_gtk_init(dt_gui_gtk_t *gui, int argc, char *argv[])
   static const gchar *MODE_NAMES[] = {"GDK_MODE_DISABLED", "GDK_MODE_SCREEN", "GDK_MODE_WINDOW"};
   static const gchar *AXIS_NAMES[] = {"GDK_AXIS_IGNORE", "GDK_AXIS_X", "GDK_AXIS_Y", "GDK_AXIS_PRESSURE", "GDK_AXIS_XTILT", "GDK_AXIS_YTILT", "GDK_AXIS_WHEEL", "GDK_AXIS_LAST"};
   dt_print(DT_DEBUG_INPUT, "[input device] Input devices found:\n\n");
-  GList *input_devices = gdk_devices_list();
+  GList *input_devices = gdk_display_list_devices(gdk_display_get_default());
   while(input_devices)
   {
     GdkDevice *device = (GdkDevice*)input_devices->data;
@@ -999,7 +999,6 @@ dt_gui_gtk_init(dt_gui_gtk_t *gui, int argc, char *argv[])
   }
 
   widget = dt_ui_center(darktable.gui->ui);
-  gtk_widget_set_extension_events(widget, GDK_EXTENSION_EVENTS_CURSOR);
 
   return 0;
 }
@@ -1598,8 +1597,8 @@ void dt_ellipsize_combo(GtkComboBox *cbox)
 // we only try to enable/disable those devices that are pens and that have a pressure axis
 void dt_gui_enable_extended_input_devices()
 {
-  GdkDevice *core_pointer = gdk_device_get_core_pointer();
-  GList *input_devices = gdk_devices_list();
+  GdkDevice *core_pointer = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_display_get_default()));
+  GList *input_devices = gdk_display_list_devices(gdk_display_get_default());
   while(input_devices)
   {
     GdkDevice *device = (GdkDevice*)input_devices->data;
@@ -1620,8 +1619,8 @@ void dt_gui_enable_extended_input_devices()
 
 void dt_gui_disable_extended_input_devices()
 {
-  GdkDevice *core_pointer = gdk_device_get_core_pointer();
-  GList *input_devices = gdk_devices_list();
+  GdkDevice *core_pointer = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_display_get_default()));
+  GList *input_devices = gdk_display_list_devices(gdk_display_get_default());
   while(input_devices)
   {
     GdkDevice *device = (GdkDevice*)input_devices->data;

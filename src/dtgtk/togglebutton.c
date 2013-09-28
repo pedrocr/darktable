@@ -191,9 +191,9 @@ static gboolean _togglebutton_draw(GtkWidget *widget, cairo_t *cr)
   else if( !(flags & CPF_BG_TRANSPARENT) )
   {
     /* draw default boxed button */
-    gtk_paint_box (gtk_widget_get_style(widget), gtk_widget_get_window(widget),
+    gtk_paint_box (gtk_widget_get_style(widget), gdk_cairo_create(gtk_widget_get_window(widget)),
                    gtk_widget_get_state(widget),
-                   GTK_SHADOW_OUT, NULL, widget, "button",
+                   GTK_SHADOW_OUT, widget, "button",
                    x, y, width, height);
   }
 

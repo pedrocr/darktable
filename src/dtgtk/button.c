@@ -134,9 +134,9 @@ _button_draw (GtkWidget *widget, cairo_t *cr)
   else if( !(flags & CPF_BG_TRANSPARENT) )
   {
     /* draw default boxed button */
-    gtk_paint_box (gtk_widget_get_style(widget), gtk_widget_get_window(widget),
+    gtk_paint_box (gtk_widget_get_style(widget), gdk_cairo_create(gtk_widget_get_window(widget)),
                    gtk_widget_get_state(widget),
-                   GTK_SHADOW_OUT, NULL, widget, "button",
+                   GTK_SHADOW_OUT, widget, "button",
                    x, y, width, height);
   }
 
@@ -163,7 +163,7 @@ _button_draw (GtkWidget *widget, cairo_t *cr)
     int lx=x+2, ly=y+((height/2.0)-(ph/2.0));
     if (DTGTK_BUTTON (widget)->icon) lx += width;
     GdkRectangle t= {x,y,x+width,y+height};
-    gtk_paint_layout(style,gtk_widget_get_window(widget), GTK_STATE_NORMAL,TRUE,&t,widget,"label",lx,ly,layout);
+    gtk_paint_layout(style,gdk_cairo_create(gtk_widget_get_window(widget)),GTK_STATE_NORMAL,TRUE,widget,"label",lx,ly,layout);
   }
 
   return FALSE;
