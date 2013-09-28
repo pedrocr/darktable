@@ -985,10 +985,16 @@ dt_gui_gtk_init(dt_gui_gtk_t *gui, int argc, char *argv[])
   while(input_devices)
   {
     GdkDevice *device = (GdkDevice*)input_devices->data;
-    dt_print(DT_DEBUG_INPUT, "%s (%s), source: %s, mode: %s, %d axes, %d keys\n", gdk_device_get_name(device), gdk_device_get_has_cursor(device)?"with cursor":"no cursor", SOURCE_NAMES[gdk_device_get_source(device)], MODE_NAMES[gdk_device_get_mode(device)], gdk_device_get_n_axes(device), gdk_device_get_n_keys(device));
-    for(int i = 0; i < gdk_device_get_n_axes(device); i++)
-    {
-      dt_print(DT_DEBUG_INPUT, "  %s\n", AXIS_NAMES[gdk_device_get_axis_use(device, i)]);
+    dt_print(DT_DEBUG_INPUT, "%s (%s), source: %s, mode: %s, %d axes, %d keys\n", gdk_device_get_name(device),
+             ((gdk_device_get_source(device)!=GDK_SOURCE_KEYBOARD)&&gdk_device_get_has_cursor(device))?"with cursor":"no cursor",
+             SOURCE_NAMES[gdk_device_get_source(device)], MODE_NAMES[gdk_device_get_mode(device)],
+             (gdk_device_get_source(device)!=GDK_SOURCE_KEYBOARD)?gdk_device_get_n_axes(device):0,
+             gdk_device_get_n_keys(device));
+    if(gdk_device_get_source (device) != GDK_SOURCE_KEYBOARD) {
+      for(int i = 0; i < gdk_device_get_n_axes(device); i++)
+      {
+        dt_print(DT_DEBUG_INPUT, "  %s\n", AXIS_NAMES[gdk_device_get_axis_use(device, i)]);
+      }
     }
     dt_print(DT_DEBUG_INPUT, "\n");
     input_devices = g_list_next(input_devices);
