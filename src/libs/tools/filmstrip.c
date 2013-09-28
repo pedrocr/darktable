@@ -479,7 +479,8 @@ static gboolean _lib_filmstrip_size_handle_button_callback(GtkWidget *w, GdkEven
     if (e->type == GDK_BUTTON_PRESS)
     {
       /* store current  mousepointer position */
-      gdk_window_get_pointer(gtk_widget_get_window(dt_ui_main_window(darktable.gui->ui)), &d->size_handle_x, &d->size_handle_y, NULL);
+      GdkDevice *device = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(gtk_widget_get_window(dt_ui_main_window(darktable.gui->ui)))));
+      gdk_window_get_device_position(gtk_widget_get_window(dt_ui_main_window(darktable.gui->ui)), device, &d->size_handle_x, &d->size_handle_y, NULL);
       gtk_widget_get_size_request(d->filmstrip, NULL, &d->size_handle_height);
       d->size_handle_is_dragging = TRUE;
     }
@@ -496,7 +497,8 @@ static gboolean _lib_filmstrip_size_handle_motion_notify_callback(GtkWidget *w, 
   if (d->size_handle_is_dragging)
   {
     gint x,y,sx,sy;
-    gdk_window_get_pointer (gtk_widget_get_window(dt_ui_main_window(darktable.gui->ui)), &x, &y, NULL);
+    GdkDevice *device = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(gtk_widget_get_window(dt_ui_main_window(darktable.gui->ui)))));
+    gdk_window_get_device_position(gtk_widget_get_window(dt_ui_main_window(darktable.gui->ui)), device, &x, &y, NULL);
     gtk_widget_get_size_request (d->filmstrip,&sx,&sy);
     sy = CLAMP(d->size_handle_height+(d->size_handle_y - y), 64,400);
 

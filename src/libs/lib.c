@@ -644,7 +644,7 @@ _preset_popup_posistion(GtkMenu *menu, gint *x,gint *y,gboolean *push_in, gpoint
 
   gdk_window_get_origin (gtk_widget_get_window(GTK_WIDGET(data)), x, y);
 
-  gtk_widget_size_request (GTK_WIDGET (menu), &requisition);
+  gtk_widget_get_preferred_size (GTK_WIDGET (menu), &requisition, NULL);
 
   /* align left panel popupmenu to right edge */
   if (*x < ww/2)

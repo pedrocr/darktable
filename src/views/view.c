@@ -217,8 +217,9 @@ int dt_view_manager_switch (dt_view_manager_t *vm, int k)
     }
 
     /* remove all widets in all containers */
-    for(int l=0; l<DT_UI_CONTAINER_SIZE; l++)
-      dt_ui_container_clear(darktable.gui->ui, l);
+//FIXME: or it segfaults
+//    for(int l=0; l<DT_UI_CONTAINER_SIZE; l++)
+//      dt_ui_container_clear(darktable.gui->ui, l);
 
     vm->current_view = -1 ;
     return 0 ;

@@ -822,7 +822,7 @@ void dt_control_change_cursor(dt_cursor_t curs)
   GtkWidget *widget = dt_ui_main_window(darktable.gui->ui);
   GdkCursor* cursor = gdk_cursor_new(curs);
   gdk_window_set_cursor(gtk_widget_get_window(widget), cursor);
-  gdk_cursor_unref(cursor);
+  g_object_unref(cursor);
 }
 
 int dt_control_running()
@@ -877,7 +877,6 @@ void dt_control_shutdown(dt_control_t *s)
   /* first wait for kick_on_workers_thread */
   pthread_join(s->kick_on_workers_thread, NULL);
 
-  // gdk_threads_leave();
   int k;
   for(k=0; k<s->num_threads; k++)
     // pthread_kill(s->thread[k], 9);
@@ -885,9 +884,6 @@ void dt_control_shutdown(dt_control_t *s)
   for(k=0; k<DT_CTL_WORKER_RESERVED; k++)
     // pthread_kill(s->thread_res[k], 9);
     pthread_join(s->thread_res[k], NULL);
-
-
-  // gdk_threads_enter();
 }
 
 static void _free_element(gpointer data, gpointer user_data)
@@ -1307,7 +1303,11 @@ void *dt_control_expose(void *voidptr)
   width  = cairo_image_surface_get_width(darktable.gui->surface);
   height = cairo_image_surface_get_height(darktable.gui->surface);
   GtkWidget *widget = dt_ui_center(darktable.gui->ui);
-  gtk_widget_get_pointer(widget, &pointerx, &pointery);
+
+//  if(!gtk_widget_get_realized(widget))
+//    return FALSE;
+  GdkDevice *device = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gtk_widget_get_display(widget)));
+  gdk_window_get_device_position (gtk_widget_get_window (widget), device, &pointerx, &pointery, NULL);
 
   //create a gtk-independent surface to draw on
   cairo_surface_t *cst = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
@@ -1627,9 +1627,6 @@ lock_and_return:
                               (gpointer)pthread_self());
   dt_pthread_mutex_unlock(&_control_gdk_lock_threads_mutex);
 
-  /* enter gdk critical section */
-  gdk_threads_enter();
-
   return TRUE;
 }
 
@@ -1642,9 +1639,6 @@ void dt_control_gdk_unlock()
     /* remove lock */
     _control_gdk_lock_threads = g_list_remove(_control_gdk_lock_threads,
                                 (gpointer)pthread_self());
-
-    /* leave critical section */
-    gdk_threads_leave();
   }
   dt_pthread_mutex_unlock(&_control_gdk_lock_threads_mutex);
 }
