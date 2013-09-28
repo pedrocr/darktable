@@ -751,7 +751,7 @@ void gui_init(struct dt_iop_module_t *self)
 
   self->widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, DT_BAUHAUS_SPACE);
   c->area = GTK_DRAWING_AREA(gtk_drawing_area_new());
-  g_object_set (GTK_OBJECT(c->area), "tooltip-text", _("abscissa: input, ordinate: output. works on RGB channels"), (char *)NULL);
+  g_object_set (G_OBJECT(c->area), "tooltip-text", _("abscissa: input, ordinate: output. works on RGB channels"), (char *)NULL);
   // GtkWidget *asp = gtk_aspect_frame_new(NULL, 0.5, 0.5, 1.0, TRUE);
   // gtk_box_pack_start(GTK_BOX(self->widget), asp, TRUE, TRUE, 0);
   // gtk_container_add(GTK_CONTAINER(asp), GTK_WIDGET(c->area));
