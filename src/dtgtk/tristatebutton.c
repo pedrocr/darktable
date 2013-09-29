@@ -69,9 +69,9 @@ static void _tristatebutton_init(GtkDarktableTriStateButton *slider)
 
 static void  _tristatebutton_size_request(GtkWidget *widget,GtkRequisition *requisition)
 {
-  g_return_if_fail(widget != NULL);
-  g_return_if_fail(DTGTK_IS_TRISTATEBUTTON(widget));
-  g_return_if_fail(requisition != NULL);
+//   g_return_if_fail(widget != NULL);
+//   g_return_if_fail(DTGTK_IS_TRISTATEBUTTON(widget));
+//   g_return_if_fail(requisition != NULL);
 
   /* create pango text settings if label exists */
   GtkStyle *style = gtk_widget_get_style(widget);
