@@ -117,17 +117,11 @@ endif()
 #
 # Find all other required libraries for building
 #
-find_package(Glib 2.30 REQUIRED)
-include_directories(${Glib_INCLUDE_DIRS})
-list(APPEND LIBS ${Glib_LIBRARIES})
-add_definitions(${Glib_DEFINITIONS})
-
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+# GTK3 pulls in ATK, GDK, GDK-PIXBUF, CAIRO, GLIB, PANGO
+find_package(GTK3 REQUIRED)
 include_directories(${GTK3_INCLUDE_DIRS})
 list(APPEND LIBS ${GTK3_LIBRARIES})
 add_definitions(${GTK3_DEFINITIONS})
-#add_definitions(${GTK3_CFLAGS_OTHER})
 
 # Check for libxml2 / broken cmake module can't be included in the foreach() below
 find_package(LibXml2 2.6 REQUIRED)
@@ -155,7 +149,7 @@ if(INOTIFY_FOUND)
 endif(INOTIFY_FOUND)
 
 # Find all the libs that don't require extra parameters
-foreach(lib ${OUR_LIBS} LensFun GIO GThread GModule Cairo PangoCairo PThread Rsvg2 GDK-PixBuf LibXml2 Sqlite3 Exiv2  CURL PNG JPEG TIFF OpenEXR LCMS2)
+foreach(lib ${OUR_LIBS} LensFun GIO GThread GModule PangoCairo PThread Rsvg2 LibXml2 Sqlite3 Exiv2  CURL PNG JPEG TIFF OpenEXR LCMS2)
   find_package(${lib} REQUIRED)
   include_directories(${${lib}_INCLUDE_DIRS})
   list(APPEND LIBS ${${lib}_LIBRARIES})
