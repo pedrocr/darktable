@@ -364,7 +364,7 @@ if(NOT APPLE AND NOT CMAKE_C_COMPILER_ID STREQUAL "Clang")
 
   #gtk3 porting: disable -Werror=deprecated-declarations for now
   message(WARNING "REMOVE BEFORE FLIGHT")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-error=deprecated-declarations")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-error=deprecated-declarations -Wno-deprecated-declarations")
 
   # gcc-4.8 build fails on unused local typedefs in gmacros.h:162
   # to be removed when glib will get fixed
