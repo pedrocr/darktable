@@ -162,7 +162,7 @@ _button_draw (GtkWidget *widget, cairo_t *cr)
   {
     int lx=x+2, ly=y+((height/2.0)-(ph/2.0));
     if (DTGTK_BUTTON (widget)->icon) lx += width;
-    GdkRectangle t= {x,y,x+width,y+height};
+//    GdkRectangle t= {x,y,x+width,y+height};
     gtk_paint_layout(style,gdk_cairo_create(gtk_widget_get_window(widget)),GTK_STATE_NORMAL,TRUE,widget,"label",lx,ly,layout);
   }
 

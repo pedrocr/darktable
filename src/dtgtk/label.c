@@ -94,7 +94,7 @@ static gboolean _label_draw(GtkWidget *widget, cairo_t *cr)
   pango_layout_set_font_description(layout,style->font_desc);
   const gchar *text=gtk_label_get_text(GTK_LABEL(widget));
   pango_layout_set_text(layout,text,-1);
-  GdkRectangle t= {x,y,x+width,y+height};
+//  GdkRectangle t= {x,y,x+width,y+height};
   int pw,ph;
   pango_layout_get_pixel_size(layout,&pw,&ph);
 
