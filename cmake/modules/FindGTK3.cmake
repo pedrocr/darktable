@@ -23,7 +23,6 @@ set(_GTK3_found_all true)
 
 # Gtk
 
-SET(PC_GTK3_FIND_REQUIRED ${GTK3_FIND_REQUIRED})
 pkg_check_modules(PC_GTK3 gtk+-3.0)
 
 if(NOT PC_GTK3_FOUND)
@@ -41,7 +40,6 @@ find_library(GDK3_LIBRARY NAMES gdk-3)
 
 # Gdk-Pixbuf
 
-SET(PC_GDKPIXBUF_FIND_REQUIRED ${GTK3_FIND_REQUIRED})
 pkg_check_modules(PC_GDKPIXBUF gdk-pixbuf-2.0)
 
 if(NOT PC_GDKPIXBUF_FOUND)
@@ -64,7 +62,6 @@ endif()
 
 # Pango
 
-SET(PC_PANGO_FIND_REQUIRED ${GTK3_FIND_REQUIRED})
 pkg_check_modules(PC_PANGO pango)
 
 if(NOT PC_PANGO_FOUND)
@@ -91,7 +88,6 @@ find_library(CAIRO_LIBRARY NAMES cairo
 
 # Atk
 
-SET(PC_ATK_FIND_REQUIRED ${GTK3_FIND_REQUIRED})
 pkg_check_modules(PC_ATK atk)
 
 if(NOT PC_ATK_FOUND)
@@ -126,4 +122,8 @@ else()
   unset(GDK3_INCLUDE_DIR)
 
   set(GTK3_FOUND false)
+
+  if(GTK3_FIND_REQUIRED)
+    message(FATAL_ERROR "GTK3 or one of its dependencies not found")
+  endif(GTK3_FIND_REQUIRED)
 endif()
