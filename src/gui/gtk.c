@@ -742,15 +742,10 @@ dt_gui_gtk_init(dt_gui_gtk_t *gui, int argc, char *argv[])
   dt_loc_get_datadir(datadir, PATH_MAX);
   dt_loc_get_user_config_dir(configdir, PATH_MAX);
 
-  g_snprintf(gtkrc, PATH_MAX, "%s/darktable.gtkrc", configdir);
+  g_snprintf(gtkrc, PATH_MAX, "%s/darktable.css", configdir);
 
   if (!g_file_test(gtkrc, G_FILE_TEST_EXISTS))
-    g_snprintf(gtkrc, PATH_MAX, "%s/darktable.gtkrc", datadir);
-
-  if (g_file_test(gtkrc, G_FILE_TEST_EXISTS))
-    (void)setenv("GTK2_RC_FILES", gtkrc, 1);
-  else
-    fprintf(stderr, "[gtk_init] could not found darktable.gtkrc");
+    g_snprintf(gtkrc, PATH_MAX, "%s/darktable.css", datadir);
 
   /* lets zero mem */
   memset(gui,0,sizeof(dt_gui_gtk_t));
@@ -782,8 +777,19 @@ dt_gui_gtk_init(dt_gui_gtk_t *gui, int argc, char *argv[])
   gui->presets_popup_menu = NULL;
   gui->last_preset = NULL;
 
-  if(g_file_test(gtkrc, G_FILE_TEST_EXISTS))
-    gtk_rc_parse (gtkrc);
+  // load the style / theme
+  GError *error = NULL;
+  GtkStyleProvider *themes_style_provider = GTK_STYLE_PROVIDER(gtk_css_provider_new());
+  gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), themes_style_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION + 1);
+
+  if(!gtk_css_provider_load_from_path(GTK_CSS_PROVIDER(themes_style_provider), gtkrc, &error))
+  {
+    printf("%s: error parsing %s: %s\n", G_STRFUNC, gtkrc, error->message);
+    g_clear_error(&error);
+  }
+
+  g_object_unref(themes_style_provider);
+
 
   // Initializing the shortcut groups
   darktable.control->accelerators = gtk_accel_group_new();
