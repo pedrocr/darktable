@@ -801,7 +801,22 @@ int dt_masks_events_mouse_moved (struct dt_iop_module_t *module, double x, doubl
   else if (form->type & DT_MASKS_ELLIPSE) rep = dt_ellipse_events_mouse_moved(module,pzx,pzy,pressure,which,form,0,gui,0);
   else if (form->type & DT_MASKS_BRUSH) rep = dt_brush_events_mouse_moved(module,pzx,pzy,pressure,which,form,0,gui,0);
 
-  if (gui) _set_hinter_message(gui, form->type);
+  if (gui)
+  {
+    int ftype = form->type;
+    if (ftype & DT_MASKS_GROUP)
+    {
+      if (gui->group_edited >=0)
+      {
+        //we get the slected form
+        dt_masks_point_group_t *fpt = (dt_masks_point_group_t *)g_list_nth_data(form->points,gui->group_edited);
+        dt_masks_form_t *sel = dt_masks_get_from_id(darktable.develop,fpt->formid);
+        if (!sel) return 0;
+        ftype = sel->type;
+      }
+    }
+    _set_hinter_message(gui, ftype);
+  }
 
   return rep;
 }
@@ -1371,8 +1386,8 @@ void dt_masks_iop_update(struct dt_iop_module_t *module)
 
 void dt_masks_form_remove(struct dt_iop_module_t *module, dt_masks_form_t *grp, dt_masks_form_t *form)
 {
-  int id = form->formid;
   if (!form) return;
+  int id = form->formid;
   if (grp && !(grp->type & DT_MASKS_GROUP)) return;
 
   if (!(form->type & DT_MASKS_CLONE) && grp)
