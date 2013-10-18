@@ -243,7 +243,7 @@ borders_button_pressed (GtkWidget *w, GdkEventButton *event, gpointer user_data)
   char key[512];
 
 
-  long which = (long)g_object_get_data(G_OBJECT(w),"border");
+  int which = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w),"border"));
   switch(which)
   {
     case 0: // left border
@@ -327,7 +327,7 @@ draw_borders (GtkWidget *widget, cairo_t *crf, gpointer user_data)
 {
   // draw arrows on borders
   if(!dt_control_running()) return TRUE;
-  long int which = (long int)user_data;
+  int which = GPOINTER_TO_INT(user_data);
   GtkAllocation allocation;
   gtk_widget_get_allocation(widget, &allocation);
   float width = allocation.width, height = allocation.height;
@@ -496,7 +496,7 @@ scrolled (GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
 static gboolean
 borders_scrolled (GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
 {
-  dt_view_manager_border_scrolled(darktable.view_manager, event->x, event->y, (long int)user_data, event->direction == GDK_SCROLL_UP);
+  dt_view_manager_border_scrolled(darktable.view_manager, event->x, event->y, GPOINTER_TO_INT(user_data), event->direction == GDK_SCROLL_UP);
   gtk_widget_queue_draw(widget);
   return TRUE;
 }
@@ -508,13 +508,13 @@ void dt_gui_gtk_quit()
 
   GtkWidget *widget;
   widget = darktable.gui->widgets.left_border;
-  g_signal_handlers_block_by_func (widget, draw_borders, (gpointer)0);
+  g_signal_handlers_block_by_func (widget, draw_borders, GINT_TO_POINTER(0));
   widget = darktable.gui->widgets.right_border;
-  g_signal_handlers_block_by_func (widget, draw_borders, (gpointer)1);
+  g_signal_handlers_block_by_func (widget, draw_borders, GINT_TO_POINTER(1));
   widget = darktable.gui->widgets.top_border;
-  g_signal_handlers_block_by_func (widget, draw_borders, (gpointer)2);
+  g_signal_handlers_block_by_func (widget, draw_borders, GINT_TO_POINTER(2));
   widget = darktable.gui->widgets.bottom_border;
-  g_signal_handlers_block_by_func (widget, draw_borders, (gpointer)3);
+  g_signal_handlers_block_by_func (widget, draw_borders, GINT_TO_POINTER(3));
 
 }
 
@@ -539,7 +539,7 @@ static gboolean _gui_switch_view_key_accel_callback(GtkAccelGroup *accel_group,
     GdkModifierType modifier,
     gpointer p)
 {
-  int view=(long int)p;
+  int view=GPOINTER_TO_INT(p);
   dt_ctl_gui_mode_t mode=DT_MODE_NONE;
   /* do some setup before switch view*/
   switch (view)
@@ -744,8 +744,10 @@ dt_gui_gtk_init(dt_gui_gtk_t *gui, int argc, char *argv[])
 
   g_snprintf(gtkrc, PATH_MAX, "%s/darktable.css", configdir);
 
-  if (!g_file_test(gtkrc, G_FILE_TEST_EXISTS))
-    g_snprintf(gtkrc, PATH_MAX, "%s/darktable.css", datadir);
+  if (g_file_test(gtkrc, G_FILE_TEST_EXISTS))
+    (void)setenv("GTK2_RC_FILES", gtkrc, 1);
+  else
+    fprintf(stderr, "[gtk_init] could not find darktable.css");
 
   /* lets zero mem */
   memset(gui,0,sizeof(dt_gui_gtk_t));
@@ -852,25 +854,25 @@ dt_gui_gtk_init(dt_gui_gtk_t *gui, int argc, char *argv[])
   //leave-notify-event
 
   widget = darktable.gui->widgets.left_border;
-  g_signal_connect (G_OBJECT (widget), "draw", G_CALLBACK (draw_borders), (gpointer)0);
+  g_signal_connect (G_OBJECT (widget), "draw", G_CALLBACK (draw_borders), GINT_TO_POINTER(0));
   g_signal_connect (G_OBJECT (widget), "button-press-event", G_CALLBACK (borders_button_pressed), darktable.gui->ui);
-  g_signal_connect (G_OBJECT (widget), "scroll-event", G_CALLBACK (borders_scrolled), (gpointer)0);
-  g_object_set_data(G_OBJECT (widget), "border", (gpointer)0);
+  g_signal_connect (G_OBJECT (widget), "scroll-event", G_CALLBACK (borders_scrolled), GINT_TO_POINTER(0));
+  g_object_set_data(G_OBJECT (widget), "border", GINT_TO_POINTER(0));
   widget = darktable.gui->widgets.right_border;
-  g_signal_connect (G_OBJECT (widget), "draw", G_CALLBACK (draw_borders), (gpointer)1);
+  g_signal_connect (G_OBJECT (widget), "draw", G_CALLBACK (draw_borders), GINT_TO_POINTER(1));
   g_signal_connect (G_OBJECT (widget), "button-press-event", G_CALLBACK (borders_button_pressed), darktable.gui->ui);
-  g_signal_connect (G_OBJECT (widget), "scroll-event", G_CALLBACK (borders_scrolled), (gpointer)1);
-  g_object_set_data(G_OBJECT (widget), "border", (gpointer)1);
+  g_signal_connect (G_OBJECT (widget), "scroll-event", G_CALLBACK (borders_scrolled), GINT_TO_POINTER(1));
+  g_object_set_data(G_OBJECT (widget), "border", GINT_TO_POINTER(1));
   widget = darktable.gui->widgets.top_border;
-  g_signal_connect (G_OBJECT (widget), "draw", G_CALLBACK (draw_borders), (gpointer)2);
+  g_signal_connect (G_OBJECT (widget), "draw", G_CALLBACK (draw_borders), GINT_TO_POINTER(2));
   g_signal_connect (G_OBJECT (widget), "button-press-event", G_CALLBACK (borders_button_pressed), darktable.gui->ui);
-  g_signal_connect (G_OBJECT (widget), "scroll-event", G_CALLBACK (borders_scrolled), (gpointer)2);
-  g_object_set_data(G_OBJECT (widget), "border", (gpointer)2);
+  g_signal_connect (G_OBJECT (widget), "scroll-event", G_CALLBACK (borders_scrolled), GINT_TO_POINTER(2));
+  g_object_set_data(G_OBJECT (widget), "border", GINT_TO_POINTER(2));
   widget = darktable.gui->widgets.bottom_border;
-  g_signal_connect (G_OBJECT (widget), "draw", G_CALLBACK (draw_borders), (gpointer)3);
+  g_signal_connect (G_OBJECT (widget), "draw", G_CALLBACK (draw_borders), GINT_TO_POINTER(3));
   g_signal_connect (G_OBJECT (widget), "button-press-event", G_CALLBACK (borders_button_pressed), darktable.gui->ui);
-  g_signal_connect (G_OBJECT (widget), "scroll-event", G_CALLBACK (borders_scrolled), (gpointer)3);
-  g_object_set_data(G_OBJECT (widget), "border", (gpointer)3);
+  g_signal_connect (G_OBJECT (widget), "scroll-event", G_CALLBACK (borders_scrolled), GINT_TO_POINTER(3));
+  g_object_set_data(G_OBJECT (widget), "border", GINT_TO_POINTER(3));
   dt_gui_presets_init();
 
   widget = dt_ui_center(darktable.gui->ui);
@@ -898,19 +900,19 @@ dt_gui_gtk_init(dt_gui_gtk_t *gui, int argc, char *argv[])
   dt_accel_connect_global(
     "capture view",
     g_cclosure_new(G_CALLBACK(_gui_switch_view_key_accel_callback),
-                   (gpointer)DT_GUI_VIEW_SWITCH_TO_TETHERING, NULL));
+                   GINT_TO_POINTER(DT_GUI_VIEW_SWITCH_TO_TETHERING), NULL));
   dt_accel_connect_global(
     "lighttable view",
     g_cclosure_new(G_CALLBACK(_gui_switch_view_key_accel_callback),
-                   (gpointer)DT_GUI_VIEW_SWITCH_TO_LIBRARY, NULL));
+                   GINT_TO_POINTER(DT_GUI_VIEW_SWITCH_TO_LIBRARY), NULL));
   dt_accel_connect_global(
     "darkroom view",
     g_cclosure_new(G_CALLBACK(_gui_switch_view_key_accel_callback),
-                   (gpointer)DT_GUI_VIEW_SWITCH_TO_DARKROOM, NULL));
+                   GINT_TO_POINTER(DT_GUI_VIEW_SWITCH_TO_DARKROOM), NULL));
   dt_accel_connect_global(
     "map view",
     g_cclosure_new(G_CALLBACK(_gui_switch_view_key_accel_callback),
-                   (gpointer)DT_GUI_VIEW_SWITCH_TO_MAP, NULL));
+                   GINT_TO_POINTER(DT_GUI_VIEW_SWITCH_TO_MAP), NULL));
 
   // register_keys for applying styles
   init_styles_key_accels();
@@ -935,19 +937,19 @@ dt_gui_gtk_init(dt_gui_gtk_t *gui, int argc, char *argv[])
   dt_accel_connect_global(
     "increase brightness",
     g_cclosure_new(G_CALLBACK(brightness_key_accel_callback),
-                   (gpointer)1, NULL));
+                   GINT_TO_POINTER(1), NULL));
   dt_accel_connect_global(
     "decrease brightness",
     g_cclosure_new(G_CALLBACK(brightness_key_accel_callback),
-                   (gpointer)0, NULL));
+                   GINT_TO_POINTER(0), NULL));
   dt_accel_connect_global(
     "increase contrast",
     g_cclosure_new(G_CALLBACK(contrast_key_accel_callback),
-                   (gpointer)1, NULL));
+                   GINT_TO_POINTER(1), NULL));
   dt_accel_connect_global(
     "decrease contrast",
     g_cclosure_new(G_CALLBACK(contrast_key_accel_callback),
-                   (gpointer)0, NULL));
+                   GINT_TO_POINTER(0), NULL));
 
   // Full-screen accelerators
   dt_accel_register_global(NC_("accel", "toggle fullscreen"), GDK_KEY_F11, 0);
@@ -956,11 +958,11 @@ dt_gui_gtk_init(dt_gui_gtk_t *gui, int argc, char *argv[])
   dt_accel_connect_global(
     "toggle fullscreen",
     g_cclosure_new(G_CALLBACK(fullscreen_key_accel_callback),
-                   (gpointer)1, NULL));
+                   GINT_TO_POINTER(1), NULL));
   dt_accel_connect_global(
     "leave fullscreen",
     g_cclosure_new(G_CALLBACK(fullscreen_key_accel_callback),
-                   (gpointer)0, NULL));
+                   GINT_TO_POINTER(0), NULL));
 
   // Side-border hide/show
   dt_accel_register_global(NC_("accel", "toggle side borders"), GDK_KEY_Tab, 0);
