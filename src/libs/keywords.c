@@ -53,10 +53,7 @@ static void _lib_keywords_drag_data_get_callback(GtkWidget *w,
     gpointer user_data);
 
 /* add keyword to collection rules */
-static void _lib_keywords_add_collection_rule(GtkTreeView *view, GtkTreePath *tp,
-    GtkTreeViewColumn *tvc, gpointer user_data);
-
-
+static void _lib_keywords_selection_change (GtkTreeSelection *selection, dt_lib_module_t *self);
 
 
 const char* name()
@@ -246,8 +243,9 @@ void gui_init(dt_lib_module_t *self)
                    self);
 
   /* add callback when keyword is activated */
-  g_signal_connect(G_OBJECT(d->view), "row-activated",
-                   G_CALLBACK(_lib_keywords_add_collection_rule), self);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(d->view);
+  gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
+  g_signal_connect(selection, "changed", G_CALLBACK(_lib_keywords_selection_change), self);
 
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(scrolled_window), TRUE, TRUE, 0);
 
@@ -379,7 +377,7 @@ static void _lib_keywords_string_from_path(char *dest,size_t ds,
     dcs += g_snprintf(dest+dcs, ds-dcs,
                       "%s%s",
                       (gchar *)g_list_nth_data(components, i),
-                      (i < g_list_length(components)-1) ? "|" : "");
+                      (i < g_list_length(components)-1) ? "|" : "%");
   }
 
   /* free data */
@@ -445,34 +443,40 @@ reject_drop:
 }
 
 
-static void _lib_keywords_add_collection_rule(GtkTreeView *view, GtkTreePath *tp,
-    GtkTreeViewColumn *tvc, gpointer user_data)
+static void _lib_keywords_selection_change (GtkTreeSelection *selection, dt_lib_module_t *self)
 {
-  char kw[1024]= {0};
-  _lib_keywords_string_from_path(kw, 1024, gtk_tree_view_get_model(view), tp);
-
-  /*
-   * add a collection rule
-   * TODO: move this into a dt_collection_xxx API to be used
-   *       from other places
-   */
-
-  int rule = dt_conf_get_int("plugins/lighttable/collect/num_rules");
+  dt_lib_keywords_t *d = (dt_lib_keywords_t *) self->data;
   char confname[200] = {0};
-
-  /* set mode to AND */
-  snprintf(confname, 200, "plugins/lighttable/collect/mode%1d", rule);
-  dt_conf_set_int(confname, 0);
-
-  /* set tag string */
-  snprintf(confname, 200, "plugins/lighttable/collect/string%1d", rule);
-  dt_conf_set_string(confname, kw);
-
-  /* set tag rule type */
-  snprintf(confname, 200, "plugins/lighttable/collect/item%1d", rule);
-  dt_conf_set_int(confname, 3);
-
-  dt_conf_set_int("plugins/lighttable/collect/num_rules", rule+1);
+  
+  GList *items = g_list_first(gtk_tree_selection_get_selected_rows(selection,NULL));
+  int rule_nb = 0;
+  while(items)
+  {
+    GtkTreePath *item = (GtkTreePath *)items->data;
+    
+    //we get the rule
+    char kw[1024]= {0};
+    _lib_keywords_string_from_path(kw, 1024, gtk_tree_view_get_model(d->view), item);
+    
+    //we save the rule
+    /* set mode to AND */
+    snprintf(confname, 200, "plugins/lighttable/collect/mode%1d", rule_nb);
+    dt_conf_set_int(confname, 0);
+  
+    /* set tag string */
+    snprintf(confname, 200, "plugins/lighttable/collect/string%1d", rule_nb);
+    dt_conf_set_string(confname, kw);
+  
+    /* set tag rule type */
+    snprintf(confname, 200, "plugins/lighttable/collect/item%1d", rule_nb);
+    dt_conf_set_int(confname, 3);
+    
+    rule_nb++;
+    items = g_list_next(items); 
+  }
+  
+  //and we finalise everuthing
+  dt_conf_set_int("plugins/lighttable/collect/num_rules", rule_nb);
 
   dt_view_collection_update(darktable.view_manager);
   dt_collection_update_query(darktable.collection);
