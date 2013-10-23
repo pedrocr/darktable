@@ -1086,7 +1086,7 @@ static void tags_view (dt_lib_collect_rule_t *dr)
   snprintf(query, 1024, "SELECT distinct name, id FROM tags WHERE name LIKE '%%%s%%' ORDER BY UPPER(name) DESC", escaped_text);
   
   DT_DEBUG_SQLITE3_PREPARE_V2(dt_database_get(darktable.db), query, -1, &stmt, NULL);
-  
+
   while (sqlite3_step(stmt) == SQLITE_ROW)
   {
     if(strchr((const char *)sqlite3_column_text(stmt, 0),'|')==0)
@@ -1449,7 +1449,7 @@ create_folders_gui (dt_lib_collect_rule_t *dr)
       gtk_tree_view_set_enable_search(tree, TRUE);
       gtk_tree_view_set_search_column (tree, DT_LIB_COLLECT_COL_PATH);
 
-      GtkTreeSelection *selection = gtk_tree_view_get_selection(d->view);
+      GtkTreeSelection *selection = gtk_tree_view_get_selection(tree);
       g_signal_connect(selection, "changed", G_CALLBACK(selection_change), d);
       g_signal_connect(G_OBJECT (tree), "button-press-event", G_CALLBACK (view_onButtonPressed), NULL);
       g_signal_connect(G_OBJECT (tree), "popup-menu", G_CALLBACK (view_onPopupMenu), NULL);
@@ -1614,37 +1614,35 @@ entry_activated (GtkWidget *entry, dt_lib_collect_rule_t *d)
 
   property = gtk_combo_box_get_active(d->combo);
 
-  if (property != DT_COLLECTION_PROP_FOLDERS)
+  if (property != DT_COLLECTION_PROP_FOLDERS && property != DT_COLLECTION_PROP_TAG)
   {
     view = c->view;
     model = gtk_tree_view_get_model(GTK_TREE_VIEW(view));
-  }
-  else
-  {
-    model = c->treemodel_folders;
-  }
 
-  rows = gtk_tree_model_iter_n_children(model, NULL);
-  if(rows == 1)
-  {
-    GtkTreeIter iter;
-    if(gtk_tree_model_get_iter_first(model, &iter))
+    rows = gtk_tree_model_iter_n_children(model, NULL);
+  
+    if(rows == 1)
     {
-      gchar *text;
-      const int item = gtk_combo_box_get_active(GTK_COMBO_BOX(d->combo));
-      if(item == DT_COLLECTION_PROP_FILMROLL || // get full path for film rolls
-          item == DT_COLLECTION_PROP_FOLDERS)    // or folders
-        gtk_tree_model_get (model, &iter, DT_LIB_COLLECT_COL_PATH, &text, -1);
-      else
-        gtk_tree_model_get (model, &iter, DT_LIB_COLLECT_COL_TEXT, &text, -1);
+      GtkTreeIter iter;
+      if(gtk_tree_model_get_iter_first(model, &iter))
+      {
+        gchar *text;
+        const int item = gtk_combo_box_get_active(GTK_COMBO_BOX(d->combo));
+        if(item == DT_COLLECTION_PROP_FILMROLL || // get full path for film rolls
+            item == DT_COLLECTION_PROP_TAG ||
+            item == DT_COLLECTION_PROP_FOLDERS)    // or folders
+          gtk_tree_model_get (model, &iter, DT_LIB_COLLECT_COL_PATH, &text, -1);
+        else
+          gtk_tree_model_get (model, &iter, DT_LIB_COLLECT_COL_TEXT, &text, -1);
 
-      g_signal_handlers_block_matched (d->text, G_SIGNAL_MATCH_FUNC, 0, 0 , NULL, entry_changed, NULL);
-      gtk_entry_set_text(GTK_ENTRY(d->text), text);
-      gtk_editable_set_position(GTK_EDITABLE(d->text), -1);
-      g_signal_handlers_unblock_matched (d->text, G_SIGNAL_MATCH_FUNC, 0, 0 , NULL, entry_changed, NULL);
-      g_free(text);
-      d->typing = FALSE;
-      update_view(NULL, d);
+        g_signal_handlers_block_matched (d->text, G_SIGNAL_MATCH_FUNC, 0, 0 , NULL, entry_changed, NULL);
+        gtk_entry_set_text(GTK_ENTRY(d->text), text);
+        gtk_editable_set_position(GTK_EDITABLE(d->text), -1);
+        g_signal_handlers_unblock_matched (d->text, G_SIGNAL_MATCH_FUNC, 0, 0 , NULL, entry_changed, NULL);
+        g_free(text);
+        d->typing = FALSE;
+        update_view(NULL, d);
+      }
     }
   }
   dt_collection_update_query(darktable.collection);
