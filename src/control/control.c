@@ -175,6 +175,9 @@ static void dt_control_sanitize_database()
                         "CREATE TABLE memory.color_labels_temp (imgid INTEGER PRIMARY KEY)",
                         NULL, NULL, NULL);
   DT_DEBUG_SQLITE3_EXEC(dt_database_get(darktable.db),
+                        "CREATE TABLE memory.collected_images (rowid INTEGER PRIMARY KEY AUTOINCREMENT, imgid INTEGER)",
+                        NULL, NULL, NULL);
+  DT_DEBUG_SQLITE3_EXEC(dt_database_get(darktable.db),
                         "CREATE TABLE memory.tmp_selection (imgid INTEGER)", NULL, NULL, NULL);
   DT_DEBUG_SQLITE3_EXEC(dt_database_get(darktable.db),
                         "CREATE TABLE memory.tagq (tmpid INTEGER PRIMARY KEY, id INTEGER)",
@@ -436,7 +439,7 @@ void dt_control_create_database_schema()
                         "raw_auto_bright_threshold real, raw_black real, raw_maximum real, "
                         "caption varchar, description varchar, license varchar, sha1sum char(40), "
                         "orientation integer ,histogram blob, lightmap blob, longitude double, "
-                        "latitude double, color_matrix blob, colorspace integer)", NULL, NULL, NULL);
+                        "latitude double, color_matrix blob, colorspace integer, version integer, max_version integer)", NULL, NULL, NULL);
   DT_DEBUG_SQLITE3_EXEC(dt_database_get(darktable.db),
                         "create index if not exists group_id_index on images (group_id)", NULL, NULL, NULL);
   DT_DEBUG_SQLITE3_EXEC(dt_database_get(darktable.db),
@@ -460,7 +463,7 @@ void dt_control_create_database_schema()
                         "create table tagged_images (imgid integer, tagid integer, "
                         "primary key(imgid, tagid))", NULL, NULL, NULL);
   DT_DEBUG_SQLITE3_EXEC(dt_database_get(darktable.db),
-                        "create table styles (name varchar,description varchar)", NULL, NULL, NULL);
+                        "CREATE TABLE styles (id INTEGER, name VARCHAR, description VARCHAR)", NULL, NULL, NULL);
   DT_DEBUG_SQLITE3_EXEC(dt_database_get(darktable.db),
                         "create table style_items (styleid integer, num integer, module integer, "
                         "operation varchar(256), op_params blob, enabled integer, "
@@ -479,6 +482,8 @@ void dt_control_create_database_schema()
   DT_DEBUG_SQLITE3_EXEC(dt_database_get(darktable.db),
                         "create table meta_data (id integer,key integer,value varchar)",
                         NULL, NULL, NULL);
+  DT_DEBUG_SQLITE3_EXEC(dt_database_get(darktable.db),
+                        "CREATE INDEX metadata_index ON meta_data (id,key)", NULL, NULL, NULL);
   // quick hack to detect if the db is already used by another process
   DT_DEBUG_SQLITE3_EXEC(dt_database_get(darktable.db),
                         "create table lock (id integer)",
@@ -643,6 +648,8 @@ void dt_control_init(dt_control_t *s)
       sqlite3_exec(dt_database_get(darktable.db),
                    "create table meta_data (id integer, key integer,value varchar)",
                    NULL, NULL, NULL);
+      sqlite3_exec(dt_database_get(darktable.db),
+                   "CREATE INDEX metadata_index ON meta_data (id,key)", NULL, NULL, NULL);
       // quick hack to detect if the db is already used by another process
       sqlite3_exec(dt_database_get(darktable.db),
                    "create table lock (id integer)",
@@ -775,6 +782,17 @@ void dt_control_init(dt_control_t *s)
       sqlite3_exec(dt_database_get(darktable.db), "alter table images add column color_matrix blob", NULL, NULL, NULL);
       // and the colorspace as specified in some image types
       sqlite3_exec(dt_database_get(darktable.db), "alter table images add column colorspace integer", NULL, NULL, NULL);
+
+
+      // add column for styles'id
+      sqlite3_exec(dt_database_get(darktable.db), "ALTER TABLE styles ADD COLUMN id INTEGER", NULL, NULL, NULL);
+      sqlite3_exec(dt_database_get(darktable.db), "UPDATE styles SET id=rowid WHERE id IS NULL", NULL, NULL, NULL);
+
+      // add the version and max_version columns
+      sqlite3_exec(dt_database_get(darktable.db), "alter table images add column version integer", NULL, NULL, NULL);
+      sqlite3_exec(dt_database_get(darktable.db), "alter table images add column max_version integer", NULL, NULL, NULL);
+      sqlite3_exec(dt_database_get(darktable.db), "update images set max_version=(select count(*)-1 from images i where i.filename=images.filename and i.film_id=images.film_id) where max_version is NULL", NULL, NULL, NULL);
+      sqlite3_exec(dt_database_get(darktable.db), "update images set version=(select count(*) from images i where i.filename=images.filename and i.film_id=images.film_id and i.id<images.id) where version is NULL", NULL, NULL, NULL);
 
       dt_pthread_mutex_unlock(&(darktable.control->global_mutex));
     }

@@ -95,7 +95,7 @@ _dt_style_cleanup_multi_instance(int id)
      SQLite there is no notion of ROW_NUMBER, so we use rather resource consuming SQL statement, but as a style has
      never a huge number of items that's not a real issue. */
 
-  DT_DEBUG_SQLITE3_PREPARE_V2(dt_database_get(darktable.db), "update style_items set multi_priority=(select COUNT(0)-1 from style_items sty2 where sty2.num<=style_items.num and sty2.operation=style_items.operation and sty2.styleid=?1), multi_name=multi_priority where styleid=?1", -1, &stmt, NULL);
+  DT_DEBUG_SQLITE3_PREPARE_V2(dt_database_get(darktable.db), "UPDATE style_items SET multi_priority=(SELECT COUNT(0)-1 FROM style_items sty2 WHERE sty2.num>=style_items.num AND sty2.operation=style_items.operation AND sty2.styleid=?1), multi_name=multi_priority WHERE styleid=?1", -1, &stmt, NULL);
   DT_DEBUG_SQLITE3_BIND_INT(stmt, 1, id);
   sqlite3_step (stmt);
   sqlite3_finalize (stmt);
@@ -111,7 +111,9 @@ dt_styles_create_style_header(const char *name, const char *description)
     return FALSE;
   }
   /* first create the style header */
-  DT_DEBUG_SQLITE3_PREPARE_V2(dt_database_get(darktable.db), "insert into styles (name,description) values (?1,?2)", -1, &stmt, NULL);
+  DT_DEBUG_SQLITE3_PREPARE_V2
+    (dt_database_get(darktable.db),
+     "INSERT INTO styles (name,description,id) VALUES (?1,?2,(SELECT COALESCE(MAX(id),0)+1 FROM styles))", -1, &stmt, NULL);
   DT_DEBUG_SQLITE3_BIND_TEXT(stmt, 1, name,strlen (name),SQLITE_STATIC);
   DT_DEBUG_SQLITE3_BIND_TEXT(stmt, 2, description,strlen (description),SQLITE_STATIC);
   sqlite3_step (stmt);
@@ -174,7 +176,7 @@ dt_styles_update (const char *name, const char *newname, const char *newdescript
 
   if ((g_strcmp0(name, newname)) || (g_strcmp0(desc, newdescription)))
   {
-    DT_DEBUG_SQLITE3_PREPARE_V2(dt_database_get(darktable.db), "update styles set name=?1, description=?2 where rowid=?3", -1, &stmt, NULL);
+    DT_DEBUG_SQLITE3_PREPARE_V2(dt_database_get(darktable.db), "UPDATE styles SET name=?1, description=?2 WHERE id=?3", -1, &stmt, NULL);
     DT_DEBUG_SQLITE3_BIND_TEXT(stmt, 1, newname, strlen (newname), SQLITE_STATIC);
     DT_DEBUG_SQLITE3_BIND_TEXT(stmt, 2, newdescription, strlen (newdescription), SQLITE_STATIC);
     DT_DEBUG_SQLITE3_BIND_INT(stmt, 3, id);
@@ -474,7 +476,7 @@ dt_styles_delete_by_name(const char *name)
   {
     /* delete the style */
     sqlite3_stmt *stmt;
-    DT_DEBUG_SQLITE3_PREPARE_V2(dt_database_get(darktable.db), "delete from styles where rowid = ?1", -1, &stmt, NULL);
+    DT_DEBUG_SQLITE3_PREPARE_V2(dt_database_get(darktable.db), "DELETE FROM styles WHERE id = ?1", -1, &stmt, NULL);
     DT_DEBUG_SQLITE3_BIND_INT(stmt, 1, id);
     sqlite3_step (stmt);
     sqlite3_finalize (stmt);
@@ -624,8 +626,7 @@ static char *
 dt_style_encode(sqlite3_stmt *stmt, int row)
 {
   const int32_t len = sqlite3_column_bytes(stmt, row);
-  char *vparams = (char *)malloc(2*len + 1);
-  dt_exif_xmp_encode ((const unsigned char *)sqlite3_column_blob(stmt, row), vparams, len);
+  char *vparams = dt_exif_xmp_encode ((const unsigned char *)sqlite3_column_blob(stmt, row), len, NULL);
   return vparams;
 }
 
@@ -856,17 +857,16 @@ dt_style_plugin_save(StylePluginData *plugin,gpointer styleId)
   //
   const char *param_c = plugin->op_params->str;
   const int param_c_len = strlen(param_c);
-  const int params_len = param_c_len/2;
-  unsigned char *params = (unsigned char *)g_malloc(params_len);
-  dt_exif_xmp_decode(param_c, params, param_c_len);
+  int params_len = 0;
+  unsigned char *params = dt_exif_xmp_decode(param_c, param_c_len, &params_len);
   DT_DEBUG_SQLITE3_BIND_BLOB(stmt, 5, params, params_len, SQLITE_TRANSIENT);
   //
   DT_DEBUG_SQLITE3_BIND_INT(stmt, 6, plugin->enabled);
 
   /* decode and store blendop params */
-  unsigned char *blendop_params = (unsigned char *)g_malloc(strlen(plugin->blendop_params->str));
-  dt_exif_xmp_decode(plugin->blendop_params->str, blendop_params, strlen(plugin->blendop_params->str));
-  DT_DEBUG_SQLITE3_BIND_BLOB(stmt, 7, blendop_params, strlen(plugin->blendop_params->str)/2, SQLITE_TRANSIENT);
+  int blendop_params_len = 0;
+  unsigned char *blendop_params = dt_exif_xmp_decode(plugin->blendop_params->str, strlen(plugin->blendop_params->str), &blendop_params_len);
+  DT_DEBUG_SQLITE3_BIND_BLOB(stmt, 7, blendop_params, blendop_params_len, SQLITE_TRANSIENT);
 
   DT_DEBUG_SQLITE3_BIND_INT(stmt, 8, plugin->blendop_version);
 
@@ -875,7 +875,7 @@ dt_style_plugin_save(StylePluginData *plugin,gpointer styleId)
 
   sqlite3_step(stmt);
   sqlite3_finalize(stmt);
-  g_free(params);
+  free(params);
 }
 
 static void
@@ -964,7 +964,7 @@ dt_styles_get_description (const char *name)
   gchar *description = NULL;
   if ((id=dt_styles_get_id_by_name(name)) != 0)
   {
-    DT_DEBUG_SQLITE3_PREPARE_V2(dt_database_get(darktable.db), "select description from styles where rowid=?1", -1, &stmt, NULL);
+    DT_DEBUG_SQLITE3_PREPARE_V2(dt_database_get(darktable.db), "SELECT description FROM styles WHERE id=?1", -1, &stmt, NULL);
     DT_DEBUG_SQLITE3_BIND_INT(stmt, 1, id);
     sqlite3_step(stmt);
     description = (char *)sqlite3_column_text (stmt, 0);
@@ -980,7 +980,7 @@ dt_styles_get_id_by_name (const char *name)
 {
   int id=0;
   sqlite3_stmt *stmt;
-  DT_DEBUG_SQLITE3_PREPARE_V2(dt_database_get(darktable.db), "select rowid from styles where name=?1 order by rowid desc limit 1", -1, &stmt, NULL);
+  DT_DEBUG_SQLITE3_PREPARE_V2(dt_database_get(darktable.db), "SELECT id FROM styles WHERE name=?1 ORDER BY id DESC LIMIT 1", -1, &stmt, NULL);
   DT_DEBUG_SQLITE3_BIND_TEXT(stmt, 1, name,strlen (name),SQLITE_TRANSIENT);
   if(sqlite3_step(stmt) == SQLITE_ROW)
   {
