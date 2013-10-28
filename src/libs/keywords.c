@@ -52,10 +52,6 @@ static void _lib_keywords_drag_data_get_callback(GtkWidget *w,
     guint time,
     gpointer user_data);
 
-/* add keyword to collection rules */
-static void _lib_keywords_add_collection_rule(GtkTreeView *view, GtkTreePath *tp,
-    GtkTreeViewColumn *tvc, gpointer user_data);
-
 
 
 
@@ -72,12 +68,12 @@ uint32_t views()
 
 uint32_t container()
 {
-  return DT_UI_CONTAINER_PANEL_LEFT_CENTER;
+  return DT_UI_CONTAINER_PANEL_RIGHT_CENTER;
 }
 
 int position()
 {
-  return 300;
+  return 475;
 }
 
 void init_key_accels(dt_lib_module_t *self)
@@ -244,10 +240,6 @@ void gui_init(dt_lib_module_t *self)
   g_signal_connect(G_OBJECT(d->view),"drag-data-get",
                    G_CALLBACK(_lib_keywords_drag_data_get_callback),
                    self);
-
-  /* add callback when keyword is activated */
-  g_signal_connect(G_OBJECT(d->view), "row-activated",
-                   G_CALLBACK(_lib_keywords_add_collection_rule), self);
 
   gtk_box_pack_start(GTK_BOX(self->widget), GTK_WIDGET(scrolled_window), TRUE, TRUE, 0);
 
@@ -442,40 +434,6 @@ static void _lib_keywords_drag_data_received_callback(GtkWidget *w,
   /* reject drop */
 reject_drop:
   gtk_drag_finish (dctx, FALSE, FALSE, time);
-}
-
-
-static void _lib_keywords_add_collection_rule(GtkTreeView *view, GtkTreePath *tp,
-    GtkTreeViewColumn *tvc, gpointer user_data)
-{
-  char kw[1024]= {0};
-  _lib_keywords_string_from_path(kw, 1024, gtk_tree_view_get_model(view), tp);
-
-  /*
-   * add a collection rule
-   * TODO: move this into a dt_collection_xxx API to be used
-   *       from other places
-   */
-
-  int rule = dt_conf_get_int("plugins/lighttable/collect/num_rules");
-  char confname[200] = {0};
-
-  /* set mode to AND */
-  snprintf(confname, 200, "plugins/lighttable/collect/mode%1d", rule);
-  dt_conf_set_int(confname, 0);
-
-  /* set tag string */
-  snprintf(confname, 200, "plugins/lighttable/collect/string%1d", rule);
-  dt_conf_set_string(confname, kw);
-
-  /* set tag rule type */
-  snprintf(confname, 200, "plugins/lighttable/collect/item%1d", rule);
-  dt_conf_set_int(confname, 3);
-
-  dt_conf_set_int("plugins/lighttable/collect/num_rules", rule+1);
-
-  dt_view_collection_update(darktable.view_manager);
-  dt_collection_update_query(darktable.collection);
 }
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh
 // vim: shiftwidth=2 expandtab tabstop=2 cindent
