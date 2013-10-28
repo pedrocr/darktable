@@ -1100,8 +1100,9 @@ static void tags_view (dt_lib_collect_rule_t *dr)
 
       /* adding a uncategorized tag */
       gtk_tree_store_insert(GTK_TREE_STORE(tagsmodel), &temp, &uncategorized,0);
-      gtk_tree_store_set(GTK_TREE_STORE(tagsmodel), &temp, 0, sqlite3_column_text(stmt, 0), -1);
-
+      gtk_tree_store_set(GTK_TREE_STORE(tagsmodel), &temp, DT_LIB_COLLECT_COL_TEXT, sqlite3_column_text(stmt, 0),
+                         DT_LIB_COLLECT_COL_PATH, sqlite3_column_text(stmt, 0),
+                         DT_LIB_COLLECT_COL_VISIBLE, TRUE, -1);
     }
     else
     {
@@ -1134,8 +1135,8 @@ static void tags_view (dt_lib_collect_rule_t *dr)
           }
 
           /* lets add new keyword and assign current */
-          if (!found)
-          {            
+          if (!found && strlen(pch[j])>0)
+          {         
             gchar *pth2 = NULL;
             pth2 = dt_util_dstrcat(pth2, "");
     
