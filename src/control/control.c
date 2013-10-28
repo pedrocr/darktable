@@ -44,10 +44,6 @@
 #  include <CoreServices/CoreServices.h>
 #endif
 
-#ifdef G_OS_WIN32
-#  include <windows.h>
-#endif
-
 #include <stdlib.h>
 #include <strings.h>
 #include <assert.h>
@@ -192,6 +188,10 @@ static void dt_control_sanitize_database()
                         "operation varchar(256) UNIQUE ON CONFLICT REPLACE, op_params blob, enabled integer, "
                         "blendop_params blob, blendop_version integer, multi_priority integer, multi_name varchar(256))",
                         NULL, NULL, NULL);
+  DT_DEBUG_SQLITE3_EXEC(dt_database_get(darktable.db),
+                        "CREATE TABLE MEMORY.style_items (styleid INTEGER, num INTEGER, module INTEGER, "
+                        "operation VARCHAR(256), op_params BLOB, enabled INTEGER, "
+                        "blendop_params BLOB, blendop_version INTEGER, multi_priority INTEGER, multi_name VARCHAR(256))", NULL, NULL, NULL);
 
   // create a table legacy_presets with all the presets from pre-auto-apply-cleanup darktable.
   dt_legacy_presets_create();
@@ -655,6 +655,10 @@ void dt_control_init(dt_control_t *s)
                    "create table lock (id integer)",
                    NULL, NULL, NULL);
 
+      // the Windows compiles of libsqlite3 don't support sqlite3_table_column_metadata.
+      // that's no big deal, the databases without the index are older than Windows support
+      // and since pathnames are different on Windows opening a db from other systems doesn't make sense anyway.
+#ifndef __WIN32__
       // selected_images should have a primary key. add it if it's missing:
       int is_in_primary_key = 0;
       sqlite3_table_column_metadata(dt_database_get(darktable.db), NULL, "selected_images", "imgid", NULL, NULL, NULL, &is_in_primary_key, NULL);
@@ -686,6 +690,7 @@ void dt_control_init(dt_control_t *s)
                      "commit",
                      NULL, NULL, NULL);
       }
+#endif
 
       // add columns where needed. will just fail otherwise:
       sqlite3_exec(dt_database_get(darktable.db),

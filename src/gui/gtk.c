@@ -745,7 +745,15 @@ dt_gui_gtk_init(dt_gui_gtk_t *gui, int argc, char *argv[])
   g_snprintf(gtkrc, PATH_MAX, "%s/darktable.css", configdir);
 
   if (g_file_test(gtkrc, G_FILE_TEST_EXISTS))
+#ifdef __WIN32__
+  {
+    gchar *str = g_strjoin("GTK2_RC_FILES=", gtkrc, NULL);
+    putenv(str);
+    g_free(str);
+  }
+#else
     (void)setenv("GTK2_RC_FILES", gtkrc, 1);
+#endif
   else
     fprintf(stderr, "[gtk_init] could not find darktable.css");
 
