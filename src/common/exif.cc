@@ -518,21 +518,21 @@ static bool dt_exif_read_exif_data(dt_image_t *img, Exiv2::ExifData &exifData)
          ((pos = exifData.findKey(Exiv2::ExifKey("Exif.Canon.0x0095")))     != exifData.end())
         ) && pos->size())
     {
-      dt_strlcpy_to_utf8(img->exif_lens, 52, pos, exifData);
+      dt_strlcpy_to_utf8(img->exif_lens, sizeof(img->exif_lens), pos, exifData);
     }
     else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Panasonic.LensType"))) != exifData.end() && pos->size())
     {
-      dt_strlcpy_to_utf8(img->exif_lens, 52, pos, exifData);
+      dt_strlcpy_to_utf8(img->exif_lens, sizeof(img->exif_lens), pos, exifData);
     }
 #if EXIV2_MINOR_VERSION>20
     else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.OlympusEq.LensModel"))) != exifData.end() && pos->size())
     {
-      dt_strlcpy_to_utf8(img->exif_lens, 52, pos, exifData);
+      dt_strlcpy_to_utf8(img->exif_lens, sizeof(img->exif_lens), pos, exifData);
     }
 #endif
     else if ( (pos=Exiv2::lensName(exifData)) != exifData.end() && pos->size())
     {
-      dt_strlcpy_to_utf8(img->exif_lens, 52, pos, exifData);
+      dt_strlcpy_to_utf8(img->exif_lens, sizeof(img->exif_lens), pos, exifData);
     }
 
 #if 0
@@ -553,8 +553,8 @@ static bool dt_exif_read_exif_data(dt_image_t *img, Exiv2::ExifData &exifData)
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.Make")))
          != exifData.end() && pos->size())
     {
-      dt_strlcpy_to_utf8(img->exif_maker, 32, pos, exifData);
-      for(char *c=img->exif_maker+31; c > img->exif_maker; c--) if(*c != ' ' && *c != '\0')
+      dt_strlcpy_to_utf8(img->exif_maker, sizeof(img->exif_maker), pos, exifData);
+      for(char *c=img->exif_maker+sizeof(img->exif_maker)-1; c > img->exif_maker; c--) if(*c != ' ' && *c != '\0')
         {
           *(c+1) = '\0';
           break;
@@ -563,14 +563,19 @@ static bool dt_exif_read_exif_data(dt_image_t *img, Exiv2::ExifData &exifData)
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.Model")))
          != exifData.end() && pos->size())
     {
-      dt_strlcpy_to_utf8(img->exif_model, 32, pos, exifData);
-      for(char *c=img->exif_model+31; c > img->exif_model; c--) if(*c != ' ' && *c != '\0')
+      dt_strlcpy_to_utf8(img->exif_model, sizeof(img->exif_model), pos, exifData);
+      for(char *c=img->exif_model+sizeof(img->exif_model)-1; c > img->exif_model; c--) if(*c != ' ' && *c != '\0')
         {
           *(c+1) = '\0';
           break;
         }
     }
-    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.DateTimeOriginal")))
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.DateTimeOriginal")))
+         != exifData.end() && pos->size())
+    {
+      dt_strlcpy_to_utf8(img->exif_datetime_taken, 20, pos, exifData);
+    }
+    else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.DateTimeOriginal")))
          != exifData.end() && pos->size())
     {
       dt_strlcpy_to_utf8(img->exif_datetime_taken, 20, pos, exifData);
@@ -730,7 +735,7 @@ static bool dt_exif_read_exif_data(dt_image_t *img, Exiv2::ExifData &exifData)
       if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.LensModel"))) != exifData.end() && pos->size())
       {
         std::string str = pos->print(&exifData);
-        sprintf(img->exif_lens, "%s", str.c_str());
+        snprintf(img->exif_lens, sizeof(img->exif_lens), "%s", str.c_str());
       }
     };
 
@@ -1046,32 +1051,28 @@ int dt_exif_read_blob(
       if(res != NULL)
       {
         exifData["Exif.Image.Artist"] = (char*)res->data;
-        g_free(res->data);
-        g_list_free(res);
+        g_list_free_full(res, &g_free);
       }
 
       res = dt_metadata_get(imgid, "Xmp.dc.title", NULL);
       if(res != NULL)
       {
         exifData["Exif.Image.ImageDescription"] = (char*)res->data;
-        g_free(res->data);
-        g_list_free(res);
+        g_list_free_full(res, &g_free);
       }
 
       res = dt_metadata_get(imgid, "Xmp.dc.description", NULL);
       if(res != NULL)
       {
         exifData["Exif.Photo.UserComment"] = (char*)res->data;
-        g_free(res->data);
-        g_list_free(res);
+        g_list_free_full(res, &g_free);
       }
 
       res = dt_metadata_get(imgid, "Xmp.dc.rights", NULL);
       if(res != NULL)
       {
         exifData["Exif.Image.Copyright"] = (char*)res->data;
-        g_free(res->data);
-        g_list_free(res);
+        g_list_free_full(res, &g_free);
       }
 
       res = dt_metadata_get(imgid, "Xmp.xmp.Rating", NULL);
@@ -1101,6 +1102,17 @@ int dt_exif_read_blob(
         g_free(long_str);
         g_free(lat_str);
       }
+
+      // According to the Exif specs DateTime is to be set to the last modification time while DateTimeOriginal is to be kept.
+      // For us "keeping" it means to write out what we have in DB to support people adding a time offset in the geotagging module.
+      gchar new_datetime[20];
+      dt_gettime(new_datetime);
+      exifData["Exif.Image.DateTime"] = new_datetime;
+      exifData["Exif.Image.DateTimeOriginal"] = cimg->exif_datetime_taken;
+      exifData["Exif.Photo.DateTimeOriginal"] = cimg->exif_datetime_taken;
+      // FIXME: What about DateTimeDigitized? we currently update it, too, which might not be what is expected for scanned images
+      exifData["Exif.Photo.DateTimeDigitized"] = cimg->exif_datetime_taken;
+
       dt_image_cache_read_release(darktable.image_cache, cimg);
     }
 
@@ -1401,6 +1413,7 @@ int dt_exif_xmp_read (dt_image_t *img, const char* filename, const int history_o
 
     sqlite3_stmt *stmt;
 
+#if 0
     // get rid of old meta data
     DT_DEBUG_SQLITE3_PREPARE_V2(dt_database_get(darktable.db),
                                 "delete from meta_data where id = ?1", -1, &stmt, NULL);
@@ -1424,6 +1437,7 @@ int dt_exif_xmp_read (dt_image_t *img, const char* filename, const int history_o
     DT_DEBUG_SQLITE3_BIND_INT(stmt, 1, img->id);
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
+#endif
 
     if(!history_only)
     {

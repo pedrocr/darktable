@@ -199,13 +199,15 @@ static void dt_control_sanitize_database()
 
 int dt_control_load_config(dt_control_t *c)
 {
+  GtkWidget *widget = dt_ui_main_window(darktable.gui->ui);
   dt_conf_set_int("ui_last/view", DT_MODE_NONE);
   int width  = dt_conf_get_int("ui_last/window_w");
   int height = dt_conf_get_int("ui_last/window_h");
+#ifndef __WIN32__
   gint x = dt_conf_get_int("ui_last/window_x");
   gint y = dt_conf_get_int("ui_last/window_y");
-  GtkWidget *widget = dt_ui_main_window(darktable.gui->ui);
   gtk_window_move(GTK_WINDOW(widget),x,y);
+#endif
   gtk_window_resize(GTK_WINDOW(widget), width, height);
   int fullscreen = dt_conf_get_bool("ui_last/fullscreen");
   if(fullscreen) gtk_window_fullscreen  (GTK_WINDOW(widget));
@@ -538,6 +540,8 @@ void dt_control_init(dt_control_t *s)
   {
     s->new_res[k] = 0;
     pthread_create(&s->thread_res[k], NULL, dt_control_work_res, s);
+    dt_pthread_mutex_init(&s->job_res[k].state_mutex, NULL);
+    dt_pthread_mutex_init(&s->job_res[k].wait_mutex, NULL);
   }
   s->button_down = 0;
   s->button_down_which = 0;
@@ -867,11 +871,11 @@ void dt_control_quit()
 #endif
 
 #ifdef USE_LUA
-  if(darktable.lua_state)
+  if(darktable.lua_state.state)
   {
-    lua_close(darktable.lua_state);
+    lua_close(darktable.lua_state.state);
     luaA_close();
-    darktable.lua_state = NULL;
+    darktable.lua_state.state = NULL;
   }
 #endif
   dt_gui_gtk_quit();
@@ -1663,6 +1667,14 @@ void dt_control_gdk_unlock()
   dt_pthread_mutex_unlock(&_control_gdk_lock_threads_mutex);
 }
 
+gboolean dt_control_gdk_haslock()
+{
+  if(pthread_equal(darktable.control->gui_thread,pthread_self()) != 0)
+    return TRUE;
+  return _control_gdk_lock_mine;
+  
+}
+
 void dt_control_queue_redraw()
 {
   dt_control_signal_raise(darktable.signals, DT_SIGNAL_CONTROL_REDRAW_ALL);
@@ -1696,6 +1708,7 @@ int dt_control_key_pressed_override(guint key, guint state)
   static char   vimkey_input[256];
   if(darktable.control->vimkey_cnt)
   {
+    guchar unichar = gdk_keyval_to_unicode(key);
     if(key == GDK_KEY_Return)
     {
       if(!strcmp(darktable.control->vimkey, ":q"))
@@ -1722,7 +1735,8 @@ int dt_control_key_pressed_override(guint key, guint state)
     }
     else if(key == GDK_KEY_BackSpace)
     {
-      darktable.control->vimkey_cnt = MAX(0, darktable.control->vimkey_cnt-1);
+      darktable.control->vimkey_cnt -= (darktable.control->vimkey + darktable.control->vimkey_cnt) -
+                                       g_utf8_prev_char(darktable.control->vimkey + darktable.control->vimkey_cnt);
       darktable.control->vimkey[darktable.control->vimkey_cnt] = 0;
       if(darktable.control->vimkey_cnt == 0)
         dt_control_log_ack_all();
@@ -1759,14 +1773,19 @@ int dt_control_key_pressed_override(guint key, guint state)
       }
       dt_control_log(darktable.control->vimkey);
     }
-    else if(key >= ' ' && key <= '~') // printable ascii character
+    else if(g_unichar_isprint(unichar)) // printable unicode character
     {
-      darktable.control->vimkey[darktable.control->vimkey_cnt] = key;
-      darktable.control->vimkey_cnt = MIN(255, darktable.control->vimkey_cnt+1);
-      darktable.control->vimkey[darktable.control->vimkey_cnt] = 0;
-      dt_control_log(darktable.control->vimkey);
-      g_list_free(autocomplete);
-      autocomplete = NULL;
+      gchar utf8[6];
+      gint char_width = g_unichar_to_utf8(unichar, utf8);
+      if(darktable.control->vimkey_cnt + 1 + char_width < 256)
+      {
+        g_utf8_strncpy(darktable.control->vimkey + darktable.control->vimkey_cnt, utf8, 1);
+        darktable.control->vimkey_cnt += char_width;
+        darktable.control->vimkey[darktable.control->vimkey_cnt] = 0;
+        dt_control_log(darktable.control->vimkey);
+        g_list_free(autocomplete);
+        autocomplete = NULL;
+      }
     }
     else if(key == GDK_KEY_Up)
     {

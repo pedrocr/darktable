@@ -89,17 +89,17 @@ static const char* const EncoderError[] = {
 
 void init(dt_imageio_module_format_t *self) {
 #ifdef USE_LUA
-  luaA_enum(darktable.lua_state,comp_type_t);
-  luaA_enum_value(darktable.lua_state,comp_type_t,webp_lossy,false);
-  luaA_enum_value(darktable.lua_state,comp_type_t,webp_lossless,false);
-  dt_lua_register_module_member(darktable.lua_state,self,dt_imageio_webp_t,comp_type,comp_type_t);
-  dt_lua_register_module_member(darktable.lua_state,self,dt_imageio_webp_t,quality,int);
-  luaA_enum(darktable.lua_state,hint_t);
-  luaA_enum_value(darktable.lua_state,hint_t,hint_default,false);
-  luaA_enum_value(darktable.lua_state,hint_t,hint_picture,false);
-  luaA_enum_value(darktable.lua_state,hint_t,hint_photo,false);
-  luaA_enum_value(darktable.lua_state,hint_t,hint_graphic,false);
-  dt_lua_register_module_member(darktable.lua_state,self,dt_imageio_webp_t,hint,hint_t);
+  luaA_enum(darktable.lua_state.state,comp_type_t);
+  luaA_enum_value(darktable.lua_state.state,comp_type_t,webp_lossy,false);
+  luaA_enum_value(darktable.lua_state.state,comp_type_t,webp_lossless,false);
+  dt_lua_register_module_member(darktable.lua_state.state,self,dt_imageio_webp_t,comp_type,comp_type_t);
+  dt_lua_register_module_member(darktable.lua_state.state,self,dt_imageio_webp_t,quality,int);
+  luaA_enum(darktable.lua_state.state,hint_t);
+  luaA_enum_value(darktable.lua_state.state,hint_t,hint_default,false);
+  luaA_enum_value(darktable.lua_state.state,hint_t,hint_picture,false);
+  luaA_enum_value(darktable.lua_state.state,hint_t,hint_photo,false);
+  luaA_enum_value(darktable.lua_state.state,hint_t,hint_graphic,false);
+  dt_lua_register_module_member(darktable.lua_state.state,self,dt_imageio_webp_t,hint,hint_t);
 #endif
 }
 void cleanup(dt_imageio_module_format_t *self) {}
@@ -134,7 +134,7 @@ write_image (dt_imageio_module_data_t *webp, const char *filename, const void *i
   pic.width = webp_data->width;
   pic.height = webp_data->height;
   if (!out) {
-    fprintf(stderr, _("[webp export] error saving to %s\n"), filename);
+    fprintf(stderr, "[webp export] error saving to %s\n", filename);
     goto Error;
   } else {
     pic.writer = FileWriter;
@@ -153,8 +153,8 @@ write_image (dt_imageio_module_data_t *webp, const char *filename, const void *i
     goto Error;
   }
   if (!WebPEncode(&config, &pic)) {
-    fprintf(stderr, _("[webp export] error during encoding!\n"));
-    fprintf(stderr, _("[webp export] error code: %d (%s)\n"),
+    fprintf(stderr, "[webp export] error during encoding!\n");
+    fprintf(stderr, "[webp export] error code: %d (%s)\n",
             pic.error_code, EncoderError[pic.error_code]);
     goto Error;
   }
@@ -302,7 +302,7 @@ void gui_init (dt_imageio_module_format_t *self)
 
   GtkWidget *hint_hbox = gtk_hbox_new(FALSE, 5);
   gtk_box_pack_start(GTK_BOX(self->widget), hint_hbox, TRUE, TRUE, 0);
-  GtkWidget *hint_label = gtk_label_new(_("Image Hint"));
+  GtkWidget *hint_label = gtk_label_new(_("image hint"));
   g_object_set(G_OBJECT(hint_label), "tooltip-text",_("image characteristics hint for the underlying encoder.\n"
                                                       "picture : digital picture, like portrait, inner shot\n"
                                                       "photo   : outdoor photograph, with natural lighting\n"

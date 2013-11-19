@@ -27,7 +27,7 @@
     <type factor="(1.0 / (1024.0 * 1024.0))" min="0">int64</type>
     <default>(1024 * 1024 * 512)</default>
     <shortdescription>memory in megabytes to use for mipmap cache</shortdescription>
-    <longdescription>(needs a restart)</longdescription>
+    <longdescription>this controls how much memory is going to be used for thumbnails and other buffers (needs a restart).</longdescription>
   </dtconfig>
   <dtconfig prefs="core">
     <name>worker_threads</name>
@@ -474,7 +474,7 @@
     <type>bool</type>
     <default>TRUE</default>
     <shortdescription>enable filmstrip</shortdescription>
-    <longdescription>enable the filmstrip in darkroom and tethering modes.</longdescription>
+    <longdescription>enable the filmstrip in darkroom, tethering and map modes.</longdescription>
   </dtconfig>
   <dtconfig>
     <name>plugins/lighttable/filmstrip/height</name>
@@ -1340,6 +1340,13 @@
     <name>plugins/darkroom/clipping/expanded</name>
     <type>bool</type>
     <default>FALSE</default>
+    <shortdescription/>
+    <longdescription/>
+  </dtconfig>
+  <dtconfig>
+    <name>plugins/darkroom/colisa/visible</name>
+    <type>bool</type>
+    <default>TRUE</default>
     <shortdescription/>
     <longdescription/>
   </dtconfig>

@@ -236,8 +236,6 @@ void dt_tag_attach(guint tagid,gint imgid)
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
   }
-
-  dt_control_signal_raise(darktable.signals, DT_SIGNAL_TAG_CHANGED);
 }
 
 void dt_tag_attach_list(GList *tags,gint imgid)
@@ -322,8 +320,6 @@ void dt_tag_detach(guint tagid,gint imgid)
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
   }
-
-  dt_control_signal_raise(darktable.signals, DT_SIGNAL_TAG_CHANGED);
 }
 
 void dt_tag_detach_by_string(const char *name, gint imgid)
@@ -557,7 +553,7 @@ uint32_t dt_tag_get_suggestions(const gchar *keyword, GList **result)
   return count;
 }
 
-void _free_result_item(dt_tag_t *t,gpointer unused)
+static void _free_result_item(dt_tag_t *t,gpointer unused)
 {
   g_free(t->tag);
   g_free(t);
