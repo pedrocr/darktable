@@ -65,11 +65,16 @@ int dt_lua_do_chunk(lua_State *L,int nargs,int nresults)
       case LUA_OK:
         if(darktable.gui!=NULL)
         {
+          dt_lua_unlock(false);
           dt_control_signal_raise(darktable.signals, DT_SIGNAL_FILMROLLS_CHANGED); // just for good measure
           dt_control_queue_redraw();
+          dt_lua_lock();
         }
+        if(nresults !=LUA_MULTRET) {
+          lua_settop(new_thread,nresults);
+        }
+        int result= lua_gettop(new_thread);
         lua_pop(L,1);
-        int result= lua_gettop(new_thread) -1;
         lua_xmove(new_thread,L,result);
         return result;
       case LUA_YIELD:

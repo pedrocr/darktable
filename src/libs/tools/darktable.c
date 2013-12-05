@@ -31,6 +31,7 @@ DT_MODULE(1)
 typedef struct dt_lib_darktable_t
 {
   cairo_surface_t *image;
+  int image_width, image_height;
 }
 dt_lib_darktable_t;
 
@@ -86,14 +87,20 @@ void gui_init(dt_lib_module_t *self)
   g_signal_connect (G_OBJECT (self->widget), "button-press-event",
                     G_CALLBACK (_lib_darktable_button_press_callback), self);
 
-  /* set size of drawing area */
-  gtk_widget_set_size_request(self->widget, 220, 48);
-
   /* create a cairo surface of dt icon */
+  time_t now;
+  time(&now);
+  struct tm lt;
+  localtime_r(&now, &lt);
+  const char *logo = (lt.tm_mon == 11 && lt.tm_mday >= 24)?"%s/pixmaps/idbutton-2.png":"%s/pixmaps/idbutton.png"; // don't you dare to tell anyone
   dt_loc_get_datadir(datadir, DT_MAX_PATH_LEN);
-  snprintf(filename, DT_MAX_PATH_LEN, "%s/pixmaps/idbutton.png", datadir);
+  snprintf(filename, DT_MAX_PATH_LEN, logo, datadir);
   d->image = cairo_image_surface_create_from_png(filename);
+  d->image_width = cairo_image_surface_get_width(d->image);
+  d->image_height = cairo_image_surface_get_height(d->image);
 
+  /* set size of drawing area */
+  gtk_widget_set_size_request(self->widget, d->image_width + 180, d->image_height + 8);
 }
 
 void gui_cleanup(dt_lib_module_t *self)
@@ -121,7 +128,7 @@ static gboolean _lib_darktable_draw_callback(GtkWidget *widget, cairo_t *cr, gpo
 
   /* paint icon image */
   cairo_set_source_surface(cr, d->image, 0, 7);
-  cairo_rectangle(cr,0,0,48,48);
+  cairo_rectangle(cr,0,0,d->image_width + 8, d->image_height + 8);
   cairo_fill(cr);
 
 
@@ -134,14 +141,14 @@ static gboolean _lib_darktable_draw_callback(GtkWidget *widget, cairo_t *cr, gpo
 
   pango_layout_set_text (layout,PACKAGE_NAME,-1);
   cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
-  cairo_move_to (cr, 42.0, 5.0);
+  cairo_move_to (cr, d->image_width + 2.0, 5.0);
   pango_cairo_show_layout (cr, layout);
 
   /* print version */
   pango_font_description_set_absolute_size (style->font_desc, 10 * PANGO_SCALE);
   pango_layout_set_font_description (layout,style->font_desc);
   pango_layout_set_text (layout,PACKAGE_VERSION,-1);
-  cairo_move_to (cr, 44.0, 30.0);
+  cairo_move_to (cr, d->image_width + 4.0, 30.0);
   cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.3);
   pango_cairo_show_layout (cr, layout);
 
@@ -185,46 +192,75 @@ static void _lib_darktable_show_about_dialog()
     "Alexandre Prokoudine",
     "",
     _("* contributors *"),
-    "Pascal Obry",
-    "Pascal de Bruijn",
-    "Jean-Sébastien Pédron",
-    "Jose Carlos Garcia Sogo",
-    "parafin",
-    "Richard Levitte",
     "Aldric Renaudin",
-    "Jérémy Rosen",
-    "Simon Spannagel",
-    "Dennis Gnad",
-    "Eckhart Pedersen",
-    "Michal Babej",
-    "Roman Lebedev",
-    "Gaspard Jankowiak",
-    "pmjdebruijn",
-    "Olivier",
-    "Moritz Lipp",
-    "Ivan Tarozzi",
-    "hal",
-    "Edouard Gomez",
-    "Stuart Henderson",
-    "Olivier Tribout",
-    "Guilherme Brondani Torri",
-    "Wolfgang Kuehnel",
-    "Richard Tollerton",
-    "James C. McPherson",
-    "Jesper Pedersen",
-    "christte",
     "Alexandre Prokoudine",
-// one committers:
-    "Wolfgang Goetz",
-    "sthen",
-    "sjjh",
-    "Roland Riegel",
-    "Julian J. M",
-    "Jon Leighton",
-    "franz",
-    "Diego Segura",
-    "Chris Mason",
+    "Alexey Dokuchaev",
+    "Ammon Riley",
+    "Anton Keks",
+    "Antony Dovgal",
     "Ari Makela",
+    "Benjamin Cahill",
+    "Brian Teague",
+    "Bruce Guenter",
+    "Cherrot Luo",
+    "Chris Mason",
+    "Christian Tellefsen",
+    "David Morel",
+    "Denis Cheremisov",
+    "Dennis Gnad",
+    "Diego Segura",
+    "Dimitrios Psychogios",
+    "Eckhart Pedersen",
+    "Edouard Gomez",
+    "Edward Herr",
+    "František Šidák",
+    "Gaspard Jankowiak",
+    "Ger Siemerink",
+    "Gianluigi Calcaterra",
+    "Guilherme Brondani Torri",
+    "Ivan Tarozzi",
+    "James C. McPherson",
+    "Jan Kundrát",
+    "Jean-Sébastien Pédron",
+    "Jérémy Rosen",
+    "Jesper Pedersen",
+    "Joao Trindade",
+    "Jon Leighton",
+    "Jose Carlos Garcia Sogo",
+    "Josef Wells",
+    "Julian J. M",
+    "Mattias Eriksson",
+    "Michal Babej",
+    "Michał Prędotka",
+    "Moritz Lipp",
+    "Olivier Tribout",
+    "Pascal de Bruijn",
+    "Pascal Obry",
+    "parafin",
+    "Petr Styblo",
+    "Pierre Le Magourou",
+    "Richard Levitte",
+    "Richard Tollerton",
+    "Robert Bieber",
+    "Roland Riegel",
+    "Roman Lebedev",
+    "Rostyslav Pidgornyi",
+    "Sergey Pavlov",
+    "Simon Harhues",
+    "Simon Spannagel",
+    "Stuart Henderson",
+    "Terry Jeffress",
+    "Tim Harder",
+    "Togan Muftuoglu",
+    "Tom Vanderpoel",
+    "Ulrich Pegelow",
+    "Wolfgang Goetz",
+    "Wolfgang Kuehnel",
+    "Yari Adan",
+    "hal",
+    "jan",
+    "maigl",
+    "tuxuser",
     "And all those of you that made previous releases possible",
     NULL
   };
