@@ -1,7 +1,7 @@
 
 /*
     This file is part of darktable,
-    copyright (c) 2009--2011 johannes hanika, henrik andersson
+    copyright (c) 2009--2014 johannes hanika, henrik andersson
 
     darktable is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #include "common/darktable.h"
 #ifdef HAVE_GPHOTO2
 #   include "common/camera_control.h"
-#   include "views/capture.h"
 #endif
 #include "common/collection.h"
 #include "common/image.h"
@@ -149,6 +148,10 @@ static void key_accel_changed(GtkAccelMap *object,
   dt_accel_path_view(path, 256, "lighttable", "preview");
   gtk_accel_map_lookup_entry(path,
                              &darktable.control->accels.lighttable_preview);
+  dt_accel_path_view(path, 256, "lighttable", "preview with focus detection");
+  gtk_accel_map_lookup_entry(path,
+                             &darktable.control->accels.lighttable_preview_display_focus);
+
 
   // Global
   dt_accel_path_global(path, 256, "toggle side borders");
@@ -541,15 +544,12 @@ static gboolean _gui_switch_view_key_accel_callback(GtkAccelGroup *accel_group,
     gpointer p)
 {
   int view=GPOINTER_TO_INT(p);
-  dt_ctl_gui_mode_t mode=DT_MODE_NONE;
+  dt_control_gui_mode_t mode=DT_MODE_NONE;
   /* do some setup before switch view*/
   switch (view)
   {
 #ifdef HAVE_GPHOTO2
     case DT_GUI_VIEW_SWITCH_TO_TETHERING:
-      // switching to capture view using "plugins/capture/current_filmroll" as session...
-      // and last used camera
-      dt_conf_set_int( "plugins/capture/mode", DT_CAPTURE_MODE_TETHERED);
       mode = DT_CAPTURE;
       break;
 #endif
@@ -738,28 +738,26 @@ center_enter(GtkWidget *widget, GdkEventCrossing *event, gpointer user_data)
 int
 dt_gui_gtk_init(dt_gui_gtk_t *gui, int argc, char *argv[])
 {
+  /* lets zero mem */
+  memset(gui,0,sizeof(dt_gui_gtk_t));
+
   // unset gtk rc from kde:
-  char gtkrc[PATH_MAX], path[PATH_MAX], datadir[PATH_MAX], configdir[PATH_MAX];
+  char path[PATH_MAX], datadir[PATH_MAX], configdir[PATH_MAX];
   dt_loc_get_datadir(datadir, PATH_MAX);
   dt_loc_get_user_config_dir(configdir, PATH_MAX);
 
-  g_snprintf(gtkrc, PATH_MAX, "%s/darktable.css", configdir);
+  g_snprintf(gui->gtkrc, PATH_MAX, "%s/darktable.css", configdir);
 
-  if (g_file_test(gtkrc, G_FILE_TEST_EXISTS))
-#ifdef __WIN32__
+  if (!g_file_test(gui->gtkrc, G_FILE_TEST_EXISTS))
+    g_snprintf(gui->gtkrc, PATH_MAX, "%s/darktable.css", datadir);
+
+  if (g_file_test(gui->gtkrc, G_FILE_TEST_EXISTS))
   {
-    gchar *str = g_strjoin("GTK2_RC_FILES=", gtkrc, NULL);
-    putenv(str);
-    g_free(str);
+    char *default_files[2] = {gui->gtkrc, NULL};
+    gtk_rc_set_default_files(default_files);
   }
-#else
-    (void)setenv("GTK2_RC_FILES", gtkrc, 1);
-#endif
   else
     fprintf(stderr, "[gtk_init] could not find darktable.css");
-
-  /* lets zero mem */
-  memset(gui,0,sizeof(dt_gui_gtk_t));
 
 #if !GLIB_CHECK_VERSION(2, 32, 0)
   if (!g_thread_supported ()) g_thread_init(NULL);
@@ -793,14 +791,13 @@ dt_gui_gtk_init(dt_gui_gtk_t *gui, int argc, char *argv[])
   GtkStyleProvider *themes_style_provider = GTK_STYLE_PROVIDER(gtk_css_provider_new());
   gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), themes_style_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION + 1);
 
-  if(!gtk_css_provider_load_from_path(GTK_CSS_PROVIDER(themes_style_provider), gtkrc, &error))
+  if(!gtk_css_provider_load_from_path(GTK_CSS_PROVIDER(themes_style_provider), gui->gtkrc, &error))
   {
-    printf("%s: error parsing %s: %s\n", G_STRFUNC, gtkrc, error->message);
+    printf("%s: error parsing %s: %s\n", G_STRFUNC, gui->gtkrc, error->message);
     g_clear_error(&error);
   }
 
   g_object_unref(themes_style_provider);
-
 
   // Initializing the shortcut groups
   darktable.control->accelerators = gtk_accel_group_new();
@@ -1425,7 +1422,7 @@ static GtkWidget * _ui_init_panel_container_center(GtkWidget *container, gboolea
   gtk_widget_set_can_focus(widget, TRUE);
   gtk_scrolled_window_set_placement(GTK_SCROLLED_WINDOW(widget), left?GTK_CORNER_TOP_LEFT:GTK_CORNER_TOP_RIGHT);
   gtk_box_pack_start(GTK_BOX(container), widget, TRUE, TRUE, 0);
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(widget), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(widget), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
   gtk_widget_set_size_request (widget,dt_conf_get_int("panel_width")-5-13, -1);
 
   /* create the scrolled viewport */

@@ -454,7 +454,7 @@ static gboolean _lib_filmstrip_mouse_leave_callback(GtkWidget *w, GdkEventCrossi
   dt_lib_module_t *self = (dt_lib_module_t *)user_data;
   dt_lib_filmstrip_t *strip = (dt_lib_filmstrip_t *)self->data;
 
-  DT_CTL_SET_GLOBAL(lib_image_mouse_over_id, strip->activated_image);
+  dt_control_set_mouse_over_id(strip->activated_image);
 
   /* suppress mouse over highlight upon leave */
   strip->pointery = -1;
@@ -706,7 +706,7 @@ static gboolean _lib_filmstrip_draw_callback(GtkWidget *widget, cairo_t *cr, gpo
     darktable.gui->center_tooltip++;
 
   strip->image_over = DT_VIEW_DESERT;
-  DT_CTL_SET_GLOBAL(lib_image_mouse_over_id, -1);
+  dt_control_set_mouse_over_id(-1);
 
   /* fill background */
   cairo_set_source_rgb (cr, .2, .2, .2);
@@ -776,7 +776,7 @@ static gboolean _lib_filmstrip_draw_callback(GtkWidget *widget, cairo_t *cr, gpo
       if(seli == col)
       {
         strip->mouse_over_id = id;
-        DT_CTL_SET_GLOBAL(lib_image_mouse_over_id, strip->mouse_over_id);
+        dt_control_set_mouse_over_id(strip->mouse_over_id);
       }
       cairo_save(cr);
       // FIXME find out where the y translation is done, how big the value is and use it directly instead of getting it from the matrix ...
@@ -836,7 +836,7 @@ static void _lib_filmstrip_scroll_to_image(dt_lib_module_t *self, gint imgid, gb
 
   strip->offset = dt_collection_image_offset(imgid);
 
-  DT_CTL_SET_GLOBAL(lib_image_mouse_over_id, strip->activated_image);
+  dt_control_set_mouse_over_id(strip->activated_image);
 
   /* activate the image if requested */
   if (activate)
@@ -868,8 +868,7 @@ static gboolean _lib_filmstrip_copy_history_key_accel_callback(GtkAccelGroup *ac
     GdkModifierType modifier, gpointer data)
 {
   dt_lib_filmstrip_t *strip = (dt_lib_filmstrip_t *)data;
-  int32_t mouse_over_id;
-  DT_CTL_GET_GLOBAL(mouse_over_id, lib_image_mouse_over_id);
+  int32_t mouse_over_id = dt_control_get_mouse_over_id();
   if(mouse_over_id <= 0) return FALSE;
   strip->history_copy_imgid = mouse_over_id;
 
@@ -904,8 +903,7 @@ static gboolean _lib_filmstrip_paste_history_key_accel_callback(GtkAccelGroup *a
 
   if (dt_history_copy_and_paste_on_selection (strip->history_copy_imgid, (mode==0)?TRUE:FALSE, strip->dg.selops)!=0)
   {
-    int32_t mouse_over_id;
-    DT_CTL_GET_GLOBAL(mouse_over_id, lib_image_mouse_over_id);
+    int32_t mouse_over_id = dt_control_get_mouse_over_id();
     if(mouse_over_id <= 0) return FALSE;
 
     dt_history_copy_and_paste_on_image(strip->history_copy_imgid, mouse_over_id, (mode == 0)?TRUE:FALSE,strip->dg.selops);
@@ -923,8 +921,7 @@ static gboolean _lib_filmstrip_paste_history_parts_key_accel_callback(GtkAccelGr
   int mode = dt_conf_get_int("plugins/lighttable/copy_history/pastemode");
 
   // get mouse over before launching the dialog
-  int32_t mouse_over_id;
-  DT_CTL_GET_GLOBAL(mouse_over_id, lib_image_mouse_over_id);
+  int32_t mouse_over_id = dt_control_get_mouse_over_id();
 
   int res = dt_gui_hist_dialog_new (&(strip->dg), strip->history_copy_imgid, FALSE);
   if(res == GTK_RESPONSE_CANCEL) return FALSE;
@@ -944,8 +941,7 @@ static gboolean _lib_filmstrip_discard_history_key_accel_callback(GtkAccelGroup 
     GObject *aceeleratable, guint keyval,
     GdkModifierType modifier, gpointer data)
 {
-  int32_t mouse_over_id;
-  DT_CTL_GET_GLOBAL(mouse_over_id, lib_image_mouse_over_id);
+  int32_t mouse_over_id = dt_control_get_mouse_over_id();
   if(mouse_over_id <= 0) return FALSE;
 
   dt_history_delete_on_image(mouse_over_id);
@@ -957,8 +953,7 @@ static gboolean _lib_filmstrip_duplicate_image_key_accel_callback(GtkAccelGroup 
     GObject *aceeleratable, guint keyval,
     GdkModifierType modifier, gpointer data)
 {
-  int32_t mouse_over_id;
-  DT_CTL_GET_GLOBAL(mouse_over_id, lib_image_mouse_over_id);
+  int32_t mouse_over_id = dt_control_get_mouse_over_id();
   if(mouse_over_id <= 0) return FALSE;
 
   /* check if images is currently loaded in darkroom */
@@ -988,8 +983,7 @@ static gboolean _lib_filmstrip_ratings_key_accel_callback(GtkAccelGroup *accel_g
     case DT_VIEW_STAR_5:
     case 666:
     {
-      int32_t mouse_over_id;
-      DT_CTL_GET_GLOBAL(mouse_over_id, lib_image_mouse_over_id);
+      int32_t mouse_over_id = dt_control_get_mouse_over_id();
       if (mouse_over_id <= 0) return FALSE;
       /* get image from cache */
 

@@ -38,6 +38,7 @@ FILE(GLOB SOURCE_FILES
   "common/imageio_tiff.c"
   "common/imageio_gm.c"
   "common/imageio_rawspeed.cc"
+  "common/import_session.c"
   "common/interpolation.c"
   "common/metadata.c"
   "common/mipmap_cache.c"
@@ -53,6 +54,7 @@ FILE(GLOB SOURCE_FILES
   "common/dlopencl.c"
   "common/ratings.c"
   "control/control.c"
+  "control/crawler.c"
   "control/jobs/control_jobs.c"
   "control/jobs/develop_jobs.c"
   "control/jobs/film_jobs.c"
@@ -396,7 +398,9 @@ if(NOT CUSTOM_CFLAGS)
 if(NOT APPLE AND NOT CMAKE_C_COMPILER_ID STREQUAL "Clang")
   # apple build fails on deprecated warnings..
   # and too many warnings reported by Clang for now
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
+  if(NOT SOURCE_PACKAGE)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
+  endif(NOT SOURCE_PACKAGE)
 
   #gtk3 porting: disable -Werror=deprecated-declarations for now
   message(WARNING "REMOVE BEFORE FLIGHT")
