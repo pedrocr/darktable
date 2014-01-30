@@ -818,6 +818,8 @@ int dt_exif_read(dt_image_t *img, const char* path)
     struct tm result;
     strftime(img->exif_datetime_taken, 20, "%Y:%m:%d %H:%M:%S", localtime_r(&statbuf.st_mtime, &result));
 
+    const char *c = path + strlen(path) - 4;
+    if(c >= path && !strcmp(c, ".pfm")) return 1;
     std::string s(e.what());
     std::cerr << "[exiv2] " << path << ": " << s << std::endl;
     return 1;
@@ -855,6 +857,8 @@ int dt_exif_write_blob(uint8_t *blob,uint32_t size, const char* path)
   }
   catch (Exiv2::AnyError& e)
   {
+    const char *c = path + strlen(path) - 4;
+    if(c >= path && !strcmp(c, ".pfm")) return 0;
     std::string s(e.what());
     std::cerr << "[exiv2] " << s << std::endl;
     return 0;
@@ -1140,6 +1144,8 @@ int dt_exif_read_blob(
   catch (Exiv2::AnyError& e)
   {
     // std::cerr.rdbuf(savecerr);
+    const char *c = path + strlen(path) - 4;
+    if(c >= path && !strcmp(c, ".pfm")) return 1;
     std::string s(e.what());
     std::cerr << "[exiv2] " << s << std::endl;
     return 0;

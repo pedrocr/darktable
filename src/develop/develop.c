@@ -805,7 +805,9 @@ auto_apply_presets(dt_develop_t *dev)
   DT_DEBUG_SQLITE3_BIND_DOUBLE(stmt, 7, fmaxf(0.0f, fminf(1000000, cimg->exif_aperture)));
   DT_DEBUG_SQLITE3_BIND_DOUBLE(stmt, 8, fmaxf(0.0f, fminf(1000000, cimg->exif_focal_length)));
   // 0: dontcare, 1: ldr, 2: raw
-  DT_DEBUG_SQLITE3_BIND_DOUBLE(stmt, 9, 2-dt_image_is_ldr(cimg));
+  DT_DEBUG_SQLITE3_BIND_DOUBLE(stmt, 9, 
+      dt_image_is_ldr(cimg) ? 1 :
+      (dt_image_is_raw(cimg) ? 2 : 3));
 
   if(sqlite3_step(stmt) == SQLITE_DONE)
   {
