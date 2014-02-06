@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/../" "${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(MODULES tonecurve gamma temperature colorcorrection exposure
-	colorin colorout clipping sharpen monochrome basecurve colorzones
+	colorin colorout clipping sharpen monochrome basecurve colorzones clut
 	basecurve highlights velvia vignette splittoning grain bilateral
 	profile_gamma colorcontrast lowpass vibrance
 	channelmixer graduatednd relight zonesystem demosaic atrous tonemap
@@ -35,6 +35,7 @@ add_library(dither MODULE "dither.c")
 add_library(monochrome MODULE "monochrome.c")
 add_library(basecurve MODULE "basecurve.c")
 add_library(colorzones MODULE "colorzones.c")
+add_library(clut MODULE "clut.c")
 add_library(highlights MODULE "highlights.c")
 add_library(velvia MODULE "velvia.c")
 add_library(vignette MODULE "vignette.c")
