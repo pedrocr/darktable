@@ -730,7 +730,6 @@ dt_gui_presets_popup_menu_show_internal(dt_dev_operation_t op, int32_t version, 
     DT_DEBUG_SQLITE3_BIND_DOUBLE(stmt, 7, image->exif_aperture);
     DT_DEBUG_SQLITE3_BIND_DOUBLE(stmt, 8, image->exif_focal_length);
     int ldr = dt_image_is_ldr(image) ? 1 : (dt_image_is_hdr(image) ? 3 : 2); // 1: ldr, 2: raw, 3: hdr
-    fprintf(stderr, "preset ldr: %d\n", ldr);
     DT_DEBUG_SQLITE3_BIND_INT(stmt, 9, ldr);
   }
   else
