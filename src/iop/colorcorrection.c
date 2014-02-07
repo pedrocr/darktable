@@ -127,9 +127,6 @@ void process (struct dt_iop_module_t *self, dt_dev_pixelpipe_iop_t *piece, void 
   float *in  = (float *)i;
   float *out = (float *)o;
   const int ch = piece->colors;
-#ifdef _OPENMP
-#pragma omp parallel for schedule(static)
-#endif
   for(int k=0; k<roi_out->width*roi_out->height; k++)
   {
     out[0] = in[0];
