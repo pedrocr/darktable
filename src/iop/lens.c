@@ -785,7 +785,7 @@ void commit_params (struct dt_iop_module_t *self, dt_iop_params_t *p1, dt_dev_pi
   {
     dt_pthread_mutex_lock(&darktable.plugin_threadsafe);
     const lfLens **lens = lf_db_find_lenses_hd(dt_iop_lensfun_db, camera, NULL,
-                          p->lens, 0);
+                          p->lens, LF_SEARCH_SORT_AND_UNIQUIFY);
     dt_pthread_mutex_unlock(&darktable.plugin_threadsafe);
     if(lens)
     {
@@ -1689,8 +1689,8 @@ static float get_autoscale(dt_iop_module_t *self, dt_iop_lensfun_params_t *p, co
   if(p->lens[0] != '\0')
   {
     dt_pthread_mutex_lock(&darktable.plugin_threadsafe);
-    const lfLens **lenslist = lf_db_find_lenses_hd (dt_iop_lensfun_db, camera, NULL, p->lens, 0);
-    if(lenslist && !lenslist[1])
+    const lfLens **lenslist = lf_db_find_lenses_hd (dt_iop_lensfun_db, camera, NULL, p->lens, LF_SEARCH_SORT_AND_UNIQUIFY);
+    if(lenslist)
     {
       // create dummy modifier
       lfModifier *modifier = lf_modifier_new(lenslist[0], p->crop, self->dev->image_storage.width, self->dev->image_storage.height);
@@ -1874,8 +1874,8 @@ void gui_init(struct dt_iop_module_t *self)
     dt_pthread_mutex_lock(&darktable.plugin_threadsafe);
     const lfLens **lenslist = lf_db_find_lenses_hd (dt_iop_lensfun_db, g->camera,
                               make [0] ? make : NULL,
-                              model [0] ? model : NULL, 0);
-    if(lenslist && !lenslist[1]) lens_set (self, lenslist[0]);
+                              model [0] ? model : NULL, LF_SEARCH_SORT_AND_UNIQUIFY);
+    if(lenslist) lens_set (self, lenslist[0]);
     lf_free (lenslist);
     dt_pthread_mutex_unlock(&darktable.plugin_threadsafe);
   }
