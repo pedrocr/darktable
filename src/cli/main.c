@@ -60,6 +60,7 @@ int main(int argc, char *arg[])
   char *image_filename = NULL;
   char *xmp_filename = NULL;
   char *output_filename = NULL;
+  int test_loadimages = 0;
   int file_counter = 0;
   int width = 0, height = 0, bpp = 0;
   gboolean verbose = FALSE, high_quality = TRUE;
@@ -78,6 +79,11 @@ int main(int argc, char *arg[])
       {
         printf("this is darktable-cli\ncopyright (c) 2012-2014 johannes hanika, tobias ellinghaus\n");
         exit(1);
+      }
+      else if(!strcmp(arg[k], "--loadimages"))
+      {
+        k++;
+        test_loadimages = MAX(atoi(arg[k]), 0);
       }
       else if(!strcmp(arg[k], "--width"))
       {
@@ -143,7 +149,7 @@ int main(int argc, char *arg[])
   for(; k < argc; k++) m_arg[m_argc++] = arg[k];
   m_arg[m_argc] = NULL;
 
-  if(file_counter < 2 || file_counter > 3)
+  if(test_loadimages == 0 && (file_counter < 2 || file_counter > 3))
   {
     usage(arg[0]);
     exit(1);
@@ -163,6 +169,27 @@ int main(int argc, char *arg[])
 
   // init dt without gui:
   if(dt_init(m_argc, m_arg, 0)) exit(1);
+
+  if(test_loadimages > 0) {
+    fprintf(stderr, "Will try to testload %d images\n", test_loadimages);
+    
+    sqlite3_stmt *stmt;
+    DT_DEBUG_SQLITE3_PREPARE_V2(dt_database_get(darktable.db),
+                                "select id from images", -1, &stmt, NULL);
+    for (int k=0; k<test_loadimages && sqlite3_step(stmt) == SQLITE_ROW; k++)
+    {
+      const int imgid = sqlite3_column_int(stmt, 0);
+      dt_mipmap_buffer_t *buf = malloc(sizeof(dt_mipmap_buffer_t));
+      dt_mipmap_cache_read_get(darktable.mipmap_cache, buf, imgid, DT_MIPMAP_1, DT_MIPMAP_BLOCKING);
+      fprintf(stderr, "Got imgid %d (%dx%d image)\n", imgid, buf->width, buf->height);
+      dt_mipmap_cache_read_release(darktable.mipmap_cache, buf);
+      free(buf);
+    }
+    sqlite3_finalize(stmt);
+
+    dt_cleanup();
+    exit(0);
+  }
 
   dt_film_t film;
   int id = 0;
