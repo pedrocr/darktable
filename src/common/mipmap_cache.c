@@ -270,7 +270,7 @@ dt_mipmap_cache_serialize(dt_mipmap_cache_t *cache)
   }
 
   // only store smallest thumbs.
-  const dt_mipmap_size_t mip = DT_MIPMAP_2;
+  const dt_mipmap_size_t mip = DT_MIPMAP_3;
 
   _iterate_data_t d;
   d.f = NULL;
@@ -321,7 +321,7 @@ static int
 dt_mipmap_cache_deserialize(dt_mipmap_cache_t *cache)
 {
   size_t rd = 0;
-  const dt_mipmap_size_t mip = DT_MIPMAP_2;
+  const dt_mipmap_size_t mip = DT_MIPMAP_3;
   uint32_t *blob = NULL;
   FILE *f = NULL;
   int file_width[mip+1], file_height[mip+1];
