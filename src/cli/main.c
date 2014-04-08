@@ -180,7 +180,7 @@ int main(int argc, char *arg[])
     {
       const int imgid = sqlite3_column_int(stmt, 0);
       dt_mipmap_buffer_t *buf = malloc(sizeof(dt_mipmap_buffer_t));
-      dt_mipmap_cache_read_get(darktable.mipmap_cache, buf, imgid, DT_MIPMAP_3, DT_MIPMAP_BLOCKING);
+      dt_mipmap_cache_read_get(darktable.mipmap_cache, buf, imgid, DT_MIPMAP_1, DT_MIPMAP_BLOCKING);
       fprintf(stderr, "Got imgid %d (%dx%d image)\n", imgid, buf->width, buf->height);
       dt_mipmap_cache_read_release(darktable.mipmap_cache, buf);
       free(buf);
