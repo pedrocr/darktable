@@ -719,8 +719,6 @@ void dt_mipmap_cache_init(dt_mipmap_cache_t *cache)
     uint32_t thumbnails = MAX(2, nearest_power_of_two((uint32_t)((double)max_mem2/cache->mip[k].buffer_size)));
     while(thumbnails > parallel && (size_t)thumbnails * cache->mip[k].buffer_size > max_mem2) thumbnails /= 2;
 
-    fprintf(stderr, "Init cache %d, with %d slots\n", k, thumbnails);
-
     // try to utilize that memory well (use 90% quota), the hopscotch paper claims good scalability up to
     // even more than that.
     dt_cache_init(&cache->mip[k].cache, thumbnails,
