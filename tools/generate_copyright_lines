@@ -1,0 +1,56 @@
+#!/usr/bin/env ruby
+
+if ARGV.size != 1
+  $stderr.puts "Usage: generate_copyright_lines <file>"
+  exit 1
+end
+
+AUTHOR_EQUIVS = {
+  "jhanika" => "johannes hanika",
+  "houz" => "Tobias Ellinghaus",
+}
+
+require 'date'
+
+author=nil
+authoryears = {}
+authorfirsts = {}
+IO.popen("git log --date=rfc #{ARGV[0]}").each do |line|
+  lineparts = line.split(":")
+  type = lineparts[0]
+  value = lineparts[1..-1].join(":").strip
+  case type
+  when "Author"
+    author = value.split("<")[0].strip
+    author = AUTHOR_EQUIVS[author] || author
+  when "Date"
+    authoryears[author] ||= []
+    timestamp = DateTime.rfc2822(value)
+    authoryears[author] << timestamp.year if !authoryears[author].include?(timestamp.year)
+    authorfirsts[author] = timestamp # git log is in reverse order so the last wins
+  end
+end
+
+copyright_list = Hash[authoryears.map do |author, years|
+  years = years.sort!
+  yearline = []
+
+  startyear = 0
+  years.zip(years[1..-1]+[nil]).each do |year, nextyear|
+    startyear = year if startyear == 0
+    if !nextyear || nextyear>year+1
+      if startyear != 0 && startyear != year
+        yearline << startyear.to_s+"-"+year.to_s
+      else
+        yearline << year.to_s
+      end
+      startyear = nextyear
+    end
+  end
+
+  [author,yearline.join(",")]
+end]
+
+authorfirsts.sort_by{|author, first| first}.each do |author, first|
+  puts "copyright (c) "+copyright_list[author]+" "+author
+end
